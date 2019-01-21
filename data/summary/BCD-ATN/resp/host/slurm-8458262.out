@@ -1,0 +1,200 @@
+
+       _________________________________________
+   .'`                                           `'.
+   |   _________________________________________   |
+   | '\.---------------------------------------./' |
+   | ||                                         || |
+   | || PPPPPPP                                 || |
+   | || P       P                               || |
+   | || PPPPPPP                                 || |
+   | || P                                       || |
+   | || P   aaa  rrrrr.    m   m   eee  ddd     || |
+   | || P  a   a r    r  m   m   m e    d   d   || |
+   | || P  aaaaa r-rr.   m   m   m eee  d    d  || |
+   | || P  a   a r    r  m   m   m e    d   d   || |
+   | || P  a   a r     r m   m   m eee  ddd     || |
+   | ||                                         || |
+   | '/\_______________________________________/\' |
+   '  `-----------------------------------------'  '
+    \                                     .-.     /
+     '.__~~~ ____()__()_()()() __________((_))__.'
+    _________________';========;'__________________
+   /  _/__/_//_//   _/_/    /_//_//   __/__/_//    \
+  /_/__/_/_/   __/ _/.-'''''-.   /_//       _/ _//_/\
+ / _.-..-..-.     .'           `.     .-..-..-./_//_||
+/ /_| || || |-. .'               `. .-| || || | /_/ //
+----\ '  '   ' /                   \ `   '  ' /----((
+ ~~~~\      / /                     \ \      /~~~~~ ))
+      `'--'`-:                       :-`'--'`   __,</
+         \   |                       |   /   .'`  `\)
+          `'-:                       :-'`   | `-../|
+             '                       '      \`-'`|/
+              \                     /mx      `'-'
+               '.                 .'
+                 '.             .'
+                   `'-..___..-'`
+
+ParmEd: a Parameter file Editor
+
+
+Reading input from STDIN...
+> Adding prmtop ../../../../../simulation/bcd/BCD-ATN/resp/host//ionized_solvated.prmtop to parm list. ../../../../../simulation/bcd/BCD-ATN/resp/host//ionized_solvated.prmtop is the active parm.
+> Loading restart file ../../../../../simulation/bcd/BCD-ATN/resp/host//ionized_solvated.rst7
+> Removing mask ':WAT,Na+,Cl-' (6942 atoms) from the topology file.
+> > Writing coordinates to complex.rst7 as type RESTART
+> Outputting Amber topology file complex.prmtop
+Done!
+
+CPPTRAJ: Trajectory Analysis. V18.01
+    ___  ___  ___  ___
+     | \/ | \/ | \/ | 
+    _|_/\_|_/\_|_/\_|_
+
+| Date/time: 11/28/18 14:37:24
+| Available memory: 66.327 GB
+
+INPUT: Reading input from 'STDIN'
+  [parm ../../../../../simulation/bcd/BCD-ATN/resp/host//ionized_solvated.prmtop]
+	Reading '../../../../../simulation/bcd/BCD-ATN/resp/host//ionized_solvated.prmtop' as Amber Topology
+	Radius Set: modified Bondi radii (mbondi)
+  [trajin ../../../../../simulation/bcd/BCD-ATN/resp/host//prod.nc]
+	Reading '../../../../../simulation/bcd/BCD-ATN/resp/host//prod.nc' as Amber NetCDF
+  [strip :WAT,Na+,Cl-]
+    STRIP: Stripping atoms in mask [:WAT,Na+,Cl-]
+  [autoimage familiar]
+    AUTOIMAGE: To box center based on center of mass, anchor is first molecule.
+  [trajout imaged.nc]
+	Writing 'imaged.nc' as Amber NetCDF
+  [go]
+---------- RUN BEGIN -------------------------------------------------
+
+PARAMETER FILES (1 total):
+ 0: ionized_solvated.prmtop, 7089 atoms, 2315 res, box: Trunc. Oct., 2315 mol, 2314 solvent
+
+INPUT TRAJECTORIES (1 total):
+ 0: 'prod.nc' is a NetCDF AMBER trajectory with coordinates, time, box, Parm ionized_solvated.prmtop (Trunc. Oct. box) (reading 4400 of 4400)
+  Coordinate processing will occur on 4400 frames.
+
+OUTPUT TRAJECTORIES (1 total):
+  'imaged.nc' (4400 frames) is a NetCDF AMBER trajectory
+
+BEGIN TRAJECTORY PROCESSING:
+.....................................................
+ACTION SETUP FOR PARM 'ionized_solvated.prmtop' (2 actions):
+  0: [strip :WAT,Na+,Cl-]
+	Stripping 6942 atoms.
+	Stripped topology: 147 atoms, 1 res, box: Trunc. Oct., 1 mol
+  1: [autoimage familiar]
+	Using first molecule as anchor.
+	0 molecules are mobile.
+.....................................................
+ACTIVE OUTPUT TRAJECTORIES (1):
+  imaged.nc (coordinates, time, box)
+----- prod.nc (1-4400, 1) -----
+ 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100% Complete.
+
+Read 4400 frames and processed 4400 frames.
+TIME: Avg. throughput= 51.5470 frames / second.
+
+ACTION OUTPUT:
+TIME: Analyses took 0.0000 seconds.
+
+RUN TIMING:
+TIME:		Init               : 0.0000 s (  0.00%)
+TIME:		Trajectory Process : 85.3590 s (100.00%)
+TIME:		Action Post        : 0.0000 s (  0.00%)
+TIME:		Analysis           : 0.0000 s (  0.00%)
+TIME:		Data File Write    : 0.0000 s (  0.00%)
+TIME:		Other              : 0.0015 s (  0.00%)
+TIME:	Run Total 85.3605 s
+---------- RUN END ---------------------------------------------------
+  [quit]
+TIME: Total execution time: 85.5069 seconds.
+--------------------------------------------------------------------------------
+To cite CPPTRAJ use:
+Daniel R. Roe and Thomas E. Cheatham, III, "PTRAJ and CPPTRAJ: Software for
+  Processing and Analysis of Molecular Dynamics Trajectory Data". J. Chem.
+  Theory Comput., 2013, 9 (7), pp 3084-3095.
+
+Error: Reference 'reference' not found.
+
+CPPTRAJ: Trajectory Analysis. V18.01
+    ___  ___  ___  ___
+     | \/ | \/ | \/ | 
+    _|_/\_|_/\_|_/\_|_
+
+| Date/time: 11/28/18 14:38:50
+| Available memory: 66.330 GB
+
+INPUT: Reading input from 'STDIN'
+  [parm complex.prmtop]
+	Reading 'complex.prmtop' as Amber Topology
+	Radius Set: modified Bondi radii (mbondi)
+  [trajin imaged.nc]
+	Reading 'imaged.nc' as Amber NetCDF
+  [reference complex.rst7]
+	Reading 'complex.rst7' as Amber Restart
+	Setting active reference for distance-based masks: 'complex.rst7'
+  [rms ref reference ':1 & !@H=']
+    RMSD: (:1 & !@H*), reference is first frame (:1 & !@H*).
+	Best-fit RMSD will be calculated, coords will be rotated and translated.
+  [trajout fitted.nc]
+	Writing 'fitted.nc' as Amber NetCDF
+  [go]
+---------- RUN BEGIN -------------------------------------------------
+
+PARAMETER FILES (1 total):
+ 0: complex.prmtop, 147 atoms, 1 res, box: Trunc. Oct., 1 mol
+
+INPUT TRAJECTORIES (1 total):
+ 0: 'imaged.nc' is a NetCDF AMBER trajectory with coordinates, time, box, Parm complex.prmtop (Trunc. Oct. box) (reading 4400 of 4400)
+  Coordinate processing will occur on 4400 frames.
+
+REFERENCE FRAMES (1 total):
+    0: complex.rst7:1
+	Active reference frame for distance-based masks is 'restart created by ParmEd'
+
+OUTPUT TRAJECTORIES (1 total):
+  'fitted.nc' (4400 frames) is a NetCDF AMBER trajectory
+
+BEGIN TRAJECTORY PROCESSING:
+.....................................................
+ACTION SETUP FOR PARM 'complex.prmtop' (1 actions):
+  0: [rms ref reference ':1 & !@H=']
+	Target mask: [:1 & !@H*](77)
+	Reference mask: [:1 & !@H*](77)
+Warning: Coordinates are being rotated and box coordinates are present.
+Warning: Unit cell vectors are NOT rotated; imaging will not be possible
+Warning:  after the RMS-fit is performed.
+.....................................................
+ACTIVE OUTPUT TRAJECTORIES (1):
+  fitted.nc (coordinates, time, box)
+----- imaged.nc (1-4400, 1) -----
+ 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100% Complete.
+
+Read 4400 frames and processed 4400 frames.
+TIME: Avg. throughput= 56.3089 frames / second.
+
+ACTION OUTPUT:
+TIME: Analyses took 0.0000 seconds.
+
+DATASETS (1 total):
+	RMSD_00002 "RMSD_00002" (double, rms), size is 4400
+
+RUN TIMING:
+TIME:		Init               : 0.0000 s (  0.00%)
+TIME:		Trajectory Process : 78.1404 s (100.00%)
+TIME:		Action Post        : 0.0000 s (  0.00%)
+TIME:		Analysis           : 0.0000 s (  0.00%)
+TIME:		Data File Write    : 0.0000 s (  0.00%)
+TIME:		Other              : 0.0012 s (  0.00%)
+TIME:	Run Total 78.1417 s
+---------- RUN END ---------------------------------------------------
+  [quit]
+TIME: Total execution time: 78.2430 seconds.
+--------------------------------------------------------------------------------
+To cite CPPTRAJ use:
+Daniel R. Roe and Thomas E. Cheatham, III, "PTRAJ and CPPTRAJ: Software for
+  Processing and Analysis of Molecular Dynamics Trajectory Data". J. Chem.
+  Theory Comput., 2013, 9 (7), pp 3084-3095.
+

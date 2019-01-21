@@ -1,0 +1,147 @@
+{% load staticfiles %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Home - LigMol</title>
+    <meta name="description" content="A simple complex database">
+    <link rel="shortcut icon" type="image/png" href="{% static 'complexTable/img/favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'complexTable/bootstrap/bootstrap.min.css' %}">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin:700">
+    <link rel="stylesheet" href="{% static 'complexTable/fonts/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'complexTable/custom.css' %}">
+    <script>
+        window.onload = function() {
+            Particles.init({
+            
+            // normal options
+            selector: '.background',
+            maxParticles: 300,
+            color: ['#DA0463', '#404B69', '#DBEDF3'],
+            connectParticles: true,
+            
+            // options for breakpoints
+            responsive: [
+                {
+                    breakpoint: 1300,
+                    options: {
+                        maxParticles: 200,
+                        // color: ['#DA0463', '#404B69', '#DBEDF3'],
+                        connectParticles: true
+                    }
+                }, {
+                    breakpoint: 768,
+                    options: {
+                        maxParticles: 75,
+                        // color: ['#DA0463', '#404B69', '#DBEDF3'],
+                        connectParticles: true
+                    }
+                }, {
+                    breakpoint: 600,
+                    options: {
+                        maxParticles: 50,
+                        // color: ['#DA0463', '#404B69', '#DBEDF3'],
+                        connectParticles: true
+                    }
+                }, {
+                breakpoint: 320,
+                options: {
+                    maxParticles: 10,
+                    connectParticles: true
+            // disables particles.js
+                    }
+                }
+            ]
+            });
+        };
+    </script>
+</head>
+
+<body id="page-top">
+    <nav class="navbar navbar-light navbar-expand-md navbar navbar-expand-lg fixed-top" id="mainNav" style="background-color: #829eaa;">
+        <div class="container"><a class="navbar-brand js-scroll-trigger" href="#">LigMol</a><button class="navbar-toggler navbar-toggler-right" data-toggle="collapse" data-target="#navbarResponsive" type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" value="Menu"><i class="fa fa-bars"></i></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item nav-link js-scroll-trigger" role="presentation"><a class="nav-link js-scroll-trigger" href="#home">Home</a></li>
+                    <li class="nav-item nav-link js-scroll-trigger" role="presentation"><a class="nav-link js-scroll-trigger" href="#about">About</a></li>
+                    <li class="nav-item nav-link js-scroll-trigger" role="presentation"><a class="nav-link js-scroll-trigger" href="#contact">contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header id="home" class="masthead upbackimg" style="background-image: url('{% static "complexTable/img/background.png"%}')";>
+        <div class="intro-body">
+            <div class="container">
+                <canvas class="background"></canvas>
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <h1 class="brand-heading">Ligmol</h1>
+                        <p class="intro-text">A simple complex database</p>
+                        <li class="list-inline-item">&nbsp;<button class="btn btn-primary btn-lg btn-default" type="button" onclick="location.href='{% url 'complexTable:complexTable' %}'">
+                            <!-- <i class="fa fa-google-plus fa-fw"></i> -->
+                            <span class="network-name">Complex List</span>
+                        </button></li>
+
+                        <!-- <a class="btn btn-link btn-circle" role="button" href="#about">
+                            <i class="fa fa-angle-double-down animated"></i>
+                        </a> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section id="about" class="content-section-small text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2>About LigMol</h2>
+                    {% lorem 3 p %}
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="contact" class="content-section-small text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="container">
+                            <div class="block-heading">
+                                <h2 class="text-info">Contact Us</h2>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
+                            </div>
+                            <form>
+                                <div class="form-group"><label>Name</label><input class="form-control" type="text" /></div>
+                                <div class="form-group"><label>Subject</label><input class="form-control" type="text" /></div>
+                                <div class="form-group"><label>Email</label><input class="form-control" type="email" /></div>
+                                <div class="form-group"><label>Message</label><textarea class="form-control-high"></textarea></div>
+                                <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Send</button></div>
+                            </form>
+                        </div>
+                        <br>
+                    <ul class="list-inline banner-social-buttons">
+                        <li class="list-inline-item">&nbsp;<button class="btn btn-primary btn-lg btn-default" type="button"><i class="fa fa-google-plus fa-fw"></i><span class="network-name">&nbsp; Google+</span></button></li>
+                        <li class="list-inline-item">&nbsp;<button class="btn btn-primary btn-lg btn-default" type="button"><i class="fa fa-twitter fa-fw"></i><span class="network-name">&nbsp;Twitter</span></button></li>
+                        <li class="list-inline-item">&nbsp;<button class="btn btn-primary btn-lg btn-default" type="button" onclick="location.href='https://github.com/Arturossi/ligmol'"><i class="fa fa-github fa-fw"></i><span class="network-name">&nbsp;github</span></button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- <div class="map-clean"><iframe allowfullscreen="" frameborder="0" width="100%" height="450" src="https://www.google.com/maps/embed/v1/place?key=+&amp;q=Paris%2C+France&amp;zoom=15"></iframe></div> -->
+    <footer>
+        <div class="container text-center">
+            <p>Copyright ©&nbsp;LigMol 2018</p>
+        </div>
+    </footer>
+
+    
+    <script src="{% static 'complexTable/js/jquery.min.js' %}"></script>
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="{% static 'complexTable/js/grayscale.js' %}"></script>
+    <script src="{% static 'complexTable/js/particles.min.js' %}"></script>
+</body>
+
+</html>

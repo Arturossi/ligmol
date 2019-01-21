@@ -1,0 +1,140 @@
+.container {
+  width: 100%;
+}
+
+.content-section-small {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.upbackimg{
+  z-index: -100;
+}
+
+.upbackimgtb{
+  filter: blur(0px) brightness(116%) contrast(104%) saturate(106%);
+  opacity: 0.95;
+  background-color: rgb(255,255,255);
+  z-index: -100;
+}
+
+.upbackimgtb2{
+  background-image: url('img/table2.png');
+  filter: blur(0px) brightness(116%) contrast(104%) saturate(106%);
+  opacity: 0.95;
+  background-color: rgb(255,255,255);
+  z-index: -100;
+}
+
+.upbackimgtb3{
+  background-image: url('img/table3.png');
+  filter: blur(0px) brightness(116%) contrast(104%) saturate(106%);
+  opacity: 0.95;
+  background-color: rgb(255,255,255);
+  z-index: -100;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.background {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 1024px;
+  z-index: 0;
+}
+
+.zindextop {
+  z-index: 100;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  height: calc(2.25rem + 2px);
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+select.form-control[multiple], select.form-control[size], textarea.form-control {
+  height: auto;
+}
+
+.form-control:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
+
+.form-control-high {
+  display: block;
+  width: 100%;
+  height: calc(10rem + 2px);
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.pointer{
+  cursor: pointer;
+}
+
+.mytable{
+  width: 90%;
+  padding-top: 50px;
+  padding-right: 80px;
+  padding-bottom: 50px;
+  padding-left: 80px;
+}
+
+.cell1{
+  background-color: rgba(187, 199, 202, 0.86);
+}
+
+.cell2{
+  background-color: rgba(140, 150, 153, 0.9);
+}
+
+.tableHeader{
+  background-color: #565d5f;
+}
+
+.limitedheight{
+  max-height: 20px;
+}
+
+th{ 
+  width: 110px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  height: 25px;
+  text-align:center;
+}
+
+tr{ 
+  width: 110px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  height: 45px;
+  text-align:center;
+}
