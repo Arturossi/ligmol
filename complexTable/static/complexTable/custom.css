@@ -138,3 +138,13 @@ tr{
   height: 45px;
   text-align:center;
 }
+
+.c3-axis-x text 
+{
+  font-size: 10px;
+}
+
+.high
+{
+  height:1200px;
+}

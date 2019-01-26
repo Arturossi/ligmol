@@ -12,7 +12,68 @@
     <link rel="stylesheet" href="{% static 'complexTable/fonts/font-awesome.min.css' %}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'complexTable/custom.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{% static 'complexTable/js/sorttable.js' %}"></script>
+    
+    <link rel="stylesheet" href="{% static 'complexTable/c3.min.css' %}">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="{% static 'complexTable/js/c3.js' %}"></script>
+    <script src="{% static 'complexTable/js/html2canvas.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            document.getElementById("exportHistogram").addEventListener("click", function() {
+
+            html2canvas(document.querySelector('#show-histogram'),{
+                    width: {{ histogram|getItem:"dsize" }},
+                    height: 600
+                }).then(function(canvas) {
+                    console.log(canvas);
+                    saveAs(canvas.toDataURL(), 'histogram.png');
+                });
+            });
+
+            function saveAs(uri, filename) {
+                var link = document.createElement('a');
+
+                if (typeof link.download === 'string') {
+                    link.href = uri;
+                    link.download = filename;
+
+                    //Firefox requires the link to be in the body
+                    document.body.appendChild(link);
+                    //simulate click
+                    link.click();
+                    //remove the link when done
+                    document.body.removeChild(link);
+                } else {
+                    window.open(uri);
+                }
+            }
+        });
+            // jQuery(document).ready(function() {
+            //     $('#exportHistogram').click(function(){
+            //     // html2canvas($('#show-histogram'), 
+            //     html2canvas(document.querySelector("#show-histogram"),
+            //     {
+            //         onrendered: function (canvas) {
+            //             var a = document.createElement('a');
+            //             // toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
+            //             a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
+            //             a.download = 'histogram.jpg';
+            //             a.click();
+            //         }
+            //     });
+            // });
+            //     jQuery( "#exportHistogram").click(function() {
+            //         alert("a");
+            //         html2canvas(document.querySelector("#show-histogram")).then(canvas => {
+            //             document.body.appendChild(canvas)
+            //         });
+            //     });
+            // });
+        </script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script> -->
+    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script> -->
 </head>
 
 <body id="page-top">
@@ -34,83 +95,146 @@
         <div style='margin-top:90;'></div>
         <br/>
         <section class="content-section-small">
-                <div class="row">
-                        <div class="col-md-4 col-sm-12 panel panel-default text-center">
-                            <input value="Return" type="button" onclick="location.href='{% url 'complexTable:complexTable' %}'" class="btn"></input>
-                        </div>
-                        <div class="col-md-4 col-sm-12">
-                            <div class="panel panel-default text-center" id="ligandNgl">
-                                <script src="https://unpkg.com/ngl"></script>
-                                <script>
-                                    var loadFileUrl = "{% static 'data/mols/CFF.cif' %}";
-                                    document.addEventListener("DOMContentLoaded", function() {
-                                        function e() {
-                                            return d ? "not _h and " + r : r
-                                        }
+            <div class="row">
+                <div class="col-md-4 col-sm-12 panel panel-default text-center">
+                    <input value="Return" type="button" onclick="location.href='{% url 'complexTable:complexTable' %}'" class="btn"></input>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="panel panel-default text-center" id="ligandNgl">
+                        <script src="https://unpkg.com/ngl"></script>
+                        <script>
+                            var loadFileUrl = "{% static 'data/mols/CFF.cif' %}";
+                            document.addEventListener("DOMContentLoaded", function() {
+                                function e() {
+                                    return d ? "not _h and " + r : r
+                                }
 
-                                        function t(e, t) {
-                                            var n = !1;
-                                            return e.getView(new NGL.Selection(t)).eachAtom(function(e) {
-                                                (isNaN(e.x) || isNaN(e.y) || isNaN(e.z)) && (n = !0)
-                                            }), n
-                                        }
+                                function t(e, t) {
+                                    var n = !1;
+                                    return e.getView(new NGL.Selection(t)).eachAtom(function(e) {
+                                        (isNaN(e.x) || isNaN(e.y) || isNaN(e.z)) && (n = !0)
+                                    }), n
+                                }
 
-                                        function n() {
-                                            f ? u.setSpin(null) : u.setSpin([0, 1, 0], .01), f = !f
-                                        }
+                                function n() {
+                                    f ? u.setSpin(null) : u.setSpin([0, 1, 0], .01), f = !f
+                                }
 
-                                        function i() {
-                                            l.setVisibility(!s), s = !s
-                                        }
+                                function i() {
+                                    l.setVisibility(!s), s = !s
+                                }
 
-                                        function o() {
-                                            c.setSelection(e()), d = !d
-                                        }
-                                        var l, a, c, d = !0,
-                                            s = !0,
-                                            r = "/0",
-                                            u = new NGL.Stage("viewport", {
-                                                backgroundColor: "white",
-                                                clipDist: 1
-                                            });
-                                        u.loadFile(loadFileUrl).then(function(n) {
-                                            r = t(n.structure, "/0") ? "/1" : "/0", c = n, c.setSelection(e()), a = n.addRepresentation("ball+stick", {
-                                                multipleBond: "symmetric"
-                                            }), l = n.addRepresentation("label", {
-                                                labelType: "atomname",
-                                                color: "black",
-                                                fontWeight: "bold ",
-                                                xOffset: .1,
-                                                yOffset: .1,
-                                                radius: 1.4
-                                            }), i(), o(), u.autoView(1)
-                                        });
-                                        var f = !1;
-                                        n(), document.getElementById("nglRotateBtn").addEventListener("click", n), document.getElementById("nglLabelsBtn").addEventListener("click", i), document.getElementById("nglHydrogensBtn").addEventListener("click", o)
+                                function o() {
+                                    c.setSelection(e()), d = !d
+                                }
+                                var l, a, c, d = !0,
+                                    s = !0,
+                                    r = "/0",
+                                    u = new NGL.Stage("viewport", {
+                                        backgroundColor: "white",
+                                        clipDist: 1
                                     });
-                                </script>
-                                <div id="viewport" style="width: 100%; height: 300px; margin-left: 5px; margin-right: 5px; overflow: hidden;">
-                                    <div style="display: none; position: fixed; z-index: 1000000; pointer-events: none; background-color: rgba(0, 0, 0, 0.6); color: lightgrey; padding: 8px; font-family: sans-serif; bottom: 603px; left: 1007px;">atom: [CFF]1.N1/0 (CFF.cif)</div>
-                                </div>
-                                <div class="text-center">
-                                    <a class="btn btn-xs btn-default" id="nglRotateBtn">Rotate</a>
-                                    <a class="btn btn-xs btn-default" id="nglHydrogensBtn">Hydrogens</a>
-                                    <a class="btn btn-xs btn-default" id="nglLabelsBtn">Labels</a>
-                                </div>
-                            </div>
+                                u.loadFile(loadFileUrl).then(function(n) {
+                                    r = t(n.structure, "/0") ? "/1" : "/0", c = n, c.setSelection(e()), a = n.addRepresentation("ball+stick", {
+                                        multipleBond: "symmetric"
+                                    }), l = n.addRepresentation("label", {
+                                        labelType: "atomname",
+                                        color: "black",
+                                        fontWeight: "bold ",
+                                        xOffset: .1,
+                                        yOffset: .1,
+                                        radius: 1.4
+                                    }), i(), o(), u.autoView(1)
+                                });
+                                var f = !1;
+                                n(), document.getElementById("nglRotateBtn").addEventListener("click", n), document.getElementById("nglLabelsBtn").addEventListener("click", i), document.getElementById("nglHydrogensBtn").addEventListener("click", o)
+                            });
+                        </script>
+                        <div id="viewport" class="border px-3" style="width: 100%; height: 400px; margin-left: 5px; margin-right: 5px; overflow: hidden;">
+                            <!-- <div style="display: none; position: fixed; z-index: 1000000; pointer-events: none; background-color: rgba(0, 0, 0, 0.6); color: lightgrey; padding: 8px; font-family: sans-serif; bottom: 603px; left: 1007px;">atom: [CFF]1.N1/0 (CFF.cif)</div> -->
                         </div>
-                        <div class="col-md-4 col-sm-12">
-                            <!-- Single button-->
-                            {% for key, val in info.items %}
-                                {% if key|lower == "complex" %}
-                                    <h1 id="complex">{{ val }}</h1>
-                                {% elif key|lower != "id" %}
-                                    <p class="text-left">{{ key }}: {{ val }}</p>
-                                {% endif %}
-                            {% endfor %}
-                            <input value="Download" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input>
+                        <div class="text-center">
+                            <a class="btn btn-xs btn-default" id="nglRotateBtn">Rotate</a>
+                            <a class="btn btn-xs btn-default" id="nglHydrogensBtn">Hydrogens</a>
+                            <a class="btn btn-xs btn-default" id="nglLabelsBtn">Labels</a>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-4 col-sm-12">{% for key, val in info.items %}{% if key|lower == "complex" %}<h1 id="complex">{{ val }}</h1>{% elif key|lower != "id" %}<p class="text-left">{{ key }}: {{ val }}</p>{% endif %}
+                    {% endfor %}<input value="Download" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input>
+                </div>
+            </div>
+        </section>
+        <section style="width: 100%; height: 780px; overflow-y: hidden; overflow-x: scroll;">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="twodmap-tab" data-toggle="tab" href="#twodmap" role="tab" aria-controls="twodmap" aria-selected="true">2D Map</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="histogram-tab" data-toggle="tab" href="#histogram" role="tab" aria-controls="histogram" aria-selected="false">histogram</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
+                </li>
+            </ul>
+                    
+            <div class="tab-content">
+                <div class="tab-pane fade high show active text-center" id="twodmap" role="tabpanel" aria-labelledby="twodmap-tab"><img src="{% static 'data/dats/2D_map.png' %}" style="height: 600px; width: 800px;" class="img-fluid" alt="2D Map"></div>
+                <div class="tab-pane fade high" id="profile" role="tabpanel" aria-labelledby="profile-tab">2</div>
+                <div class="tab-pane fade high" id="histogram" role="tabpanel" aria-labelledby="histogram-tab" style="height: 900px">
+                    <div class="border-bottom">
+                        <input id="exportHistogram" type="button" value="Export graphic as image" class="mx-4 my-2"></input>
+                        <form method="POST" action="hist-form" id="hist-form">
+                            <div class="mx-4 my-2">
+                                {% csrf_token %}
+                                {{ histForm }}
+                                <input type="submit" value="Update Graphic" class="tiny button">
+                            </div>
+                        </form>
+                    </div>
+                    <div id="show-histogram" style="width:3600px;"></div>
+                    <script>
+                        var chart = c3.generate({
+                            bindto: '#show-histogram',
+                            data: {
+                                columns: [
+                                    {% for data in histogram|getItem:"datas" %}[{% for info in data %}{% if forloop.first %}'{{ info }}'{% else %}{{ info }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %}, 
+                                    {% endif %}{% endfor %}
+                                ],
+                                type: 'bar'
+                            },
+                            size: {
+                                height: 600,
+                                width: {{ histogram|getItem:"dsize" }}
+                            },
+                            padding: {
+                                    bottom: 80 // add 10px for some spacing
+                            },
+                            axis: {
+                                x: {
+                                    type: 'category',
+                                    categories: [{% for name in histogram|getItem:"names" %}'{{ name }}'{% if not forloop.last %}, {% endif %}{% endfor %}]
+                                }
+                            },
+                            bar: {
+                                width: {
+                                    ratio: 0.7 // this makes bar width 50% of length between ticks
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+                <div class="tab-pane fade high" id="settings" role="tabpanel" aria-labelledby="settings-tab">4</div>
+            </div>
+                    
+            <!-- <script>
+                $(function () {
+                    $('#myTab li:last-child a').tab('show')
+                })
+            </script> -->
         </section>
     <footer>
         <div class="container text-center">
@@ -118,10 +242,13 @@
         </div>
     </footer>
     <script src="{% static 'complexTable/js/jquery.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <script src="{% static 'complexTable/js/grayscale.js' %}"></script>
+    <!-- <script src="{% static 'complexTable/js/grayscale.js' %}"></script> -->
     <script src="{% static 'complexTable/js/particles.min.js' %}"></script>
     <script src="{% static 'complexTable/js/ligmol.js' %}"></script>
+    <script src="{% static 'complexTable/js/custom.js' %}"></script>
 </body>
 
 </html>
