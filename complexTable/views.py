@@ -50,7 +50,6 @@ def hist_post(request):
                             if datas[innerIndex][index] < mincutoff or datas[innerIndex][index] > maxcutoff:
                                 deleter.insert(0, index)
                                 break
-
             
             elif mincutoff == None and maxcutoff != None:
                 for index in range(0, datasLen):
@@ -87,8 +86,44 @@ def hist_post(request):
             response_data['result'] = 'Create post successful!'
             response_data['mincutoff'] = mincutoff
             response_data['maxcutoff'] = maxcutoff
-            response_data['histData'] = histogram
+            #response_data['histData'] = histogram
             
+
+            toPrint = "\n\tvar chart = c3.generate({\n\t\tbindto: '#show-histogram',\n\t\tdata: {\n\t\t\tcolumns: [\n\t"
+
+            dataslen = len(datas) - 1
+            for index, data in enumerate(datas):
+                toPrint = toPrint + "\t\t["
+                datalen = len(data) -1 
+                for innerIndex, info in enumerate(data):
+                    if innerIndex == 0:
+                        toPrint = toPrint + "'" + str(info) + "'"
+                    else:
+                        toPrint = toPrint + str(info)
+                    
+                    if not innerIndex == datalen:
+                        toPrint = toPrint + ", "
+                
+                if not index == dataslen:
+                    toPrint = toPrint + "],\n\t"
+                else:
+                    toPrint = toPrint + "]\n\t"
+            
+            toPrint = toPrint + "\t],\n\t\ttype: 'bar'\n\t\t},\n\t\tsize: {\n\t\t\theight: 600,\n\t\t\twidth: "
+            toPrint = toPrint + str((len(names) + 1) * spacing)
+            toPrint = toPrint + "\n\t\t},\n\t\tpadding: {\n\t\t\tbottom: 80\n\t\t},\n\t\taxis: {\n\t\t\tx: {\n\t\t\t\ttype: 'category',\n\t\t\t\tcategories: ["
+            
+            nameslen = len(names) - 1
+
+            for index, name in enumerate(names):
+                toPrint = toPrint + "'" + str(name) + "'"
+
+                if not index == nameslen:
+                    toPrint = toPrint + ", "
+            
+            toPrint = toPrint + "]\n\t\t\t}\n\t\t},\n\t\tbar: {\n\t\t\twidth: {\n\t\t\t\tratio: 0.7\n\t\t\t}\n\t\t}\n\t});\n"
+            
+            response_data["script"] = toPrint
 
             return HttpResponse(
                 json.dumps(response_data),
