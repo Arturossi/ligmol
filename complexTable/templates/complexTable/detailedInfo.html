@@ -195,7 +195,7 @@
                             </div>
                         </form>
                     </div>
-                    <div id="show-histogram" style="width:3600px;"></div>
+                    <div id="show-histogram" style="width: auto; align-items: center; justify-content: space-around; display: flex; float: none;"></div>
                     <script id="hist-code">
                         var chart = c3.generate({
                             bindto: '#show-histogram',
@@ -231,7 +231,7 @@
                         $('#hist-form').on('submit', function(event){
                             event.preventDefault();
                             console.log("form submitted!")  // sanity check
-                            eval(document.getElementById("hist-form").innerHTML);
+                            hist_post();
                         });
 
                         // AJAX for posting
