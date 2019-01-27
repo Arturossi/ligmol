@@ -24,7 +24,9 @@
             document.getElementById("exportHistogram").addEventListener("click", function() {
 
             html2canvas(document.querySelector('#show-histogram'),{
-                    width: {{ histogram|getItem:"dsize" }},
+                    letterRendering: 1,
+                    allowTaint: true,
+                    width: $('#show-histogram > svg').width(),//{{ histogram|getItem:"dsize" }},
                     height: 600
                 }).then(function(canvas) {
                     console.log(canvas);
@@ -50,30 +52,7 @@
                 }
             }
         });
-            // jQuery(document).ready(function() {
-            //     $('#exportHistogram').click(function(){
-            //     // html2canvas($('#show-histogram'), 
-            //     html2canvas(document.querySelector("#show-histogram"),
-            //     {
-            //         onrendered: function (canvas) {
-            //             var a = document.createElement('a');
-            //             // toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
-            //             a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
-            //             a.download = 'histogram.jpg';
-            //             a.click();
-            //         }
-            //     });
-            // });
-            //     jQuery( "#exportHistogram").click(function() {
-            //         alert("a");
-            //         html2canvas(document.querySelector("#show-histogram")).then(canvas => {
-            //             document.body.appendChild(canvas)
-            //         });
-            //     });
-            // });
         </script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script> -->
-    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script> -->
 </head>
 
 <body id="page-top">
@@ -165,7 +144,7 @@
                 </div>
             </div>
         </section>
-        <section style="width: 100%; height: 780px; overflow-y: hidden; overflow-x: scroll;">
+        <section style="width: 100%; height: 780px; overflow-y: hidden; overflow-x: hidden;">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="twodmap-tab" data-toggle="tab" href="#twodmap" role="tab" aria-controls="twodmap" aria-selected="true">2D Map</a>
@@ -184,7 +163,7 @@
             <div class="tab-content">
                 <div class="tab-pane fade high show active text-center" id="twodmap" role="tabpanel" aria-labelledby="twodmap-tab"><img src="{% static 'data/dats/2D_map.png' %}" style="height: 600px; width: 800px;" class="img-fluid" alt="2D Map"></div>
                 <div class="tab-pane fade high" id="profile" role="tabpanel" aria-labelledby="profile-tab">2</div>
-                <div class="tab-pane fade high" id="histogram" role="tabpanel" aria-labelledby="histogram-tab" style="height: 900px">
+                <div class="tab-pane fade high" id="histogram" role="tabpanel" aria-labelledby="histogram-tab" style="height: 900px;">
                     <div class="border-bottom">
                         <input id="exportHistogram" type="button" value="Export graphic as image" class="mx-4 my-2"></input>
                         <form method="POST" action="hist-form" id="hist-form">
@@ -195,7 +174,15 @@
                             </div>
                         </form>
                     </div>
-                    <div id="show-histogram" style="width: auto; align-items: center; justify-content: space-around; display: flex; float: none;"></div>
+                    <div style="width:auto;">
+                        <style>
+                            svg {
+                                display: block;
+                                margin: auto;
+                            }
+                        </style>
+                        <div id="show-histogram" class="center" style="width: auto; overflow-x: auto;"></div>
+                    </div>
                     <script id="hist-code">
                         var chart = c3.generate({
                             bindto: '#show-histogram',
@@ -226,12 +213,26 @@
                             }
                         });
                     </script>
+                    <style id="hist-style">
+                        .html2canvas-container
+                        {
+                            width: {{ histogram|getItem:'dsize' }}px !important;
+                            height: 600px !important;
+                        }
+                    </style>
                     <script>
                         // Submit post on submit
                         $('#hist-form').on('submit', function(event){
                             event.preventDefault();
                             console.log("form submitted!")  // sanity check
-                            hist_post();
+                            if($("#id_mincutoff").val() > $("#id_maxcutoff").val())
+                            {
+                                alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
+                            }
+                            else
+                            {
+                                hist_post();
+                            }
                         });
 
                         // AJAX for posting
@@ -249,12 +250,16 @@
                                     console.log(json); // log the returned json to the console
                                     
                                     $("#hist-code").empty(); // Remove data from hist-code DOM
+                                    $("#hist-style").empty(); // Remove data from hist-code DOM
                                     $("#show-histogram").empty(); // Remove data from hist-code DOM
-
                                     
                                     var data = json;//JSON.parse(json);
-                                    $("#hist-code").prepend(data['script'])
+                                    $("#hist-code").prepend(data['script']);
+                                    $("#hist-style").prepend(data['style']);
+
                                     eval(document.getElementById("hist-code").innerHTML);
+                                    eval(document.getElementById("hist-style").innerHTML);
+
                                     console.log("success"); // another sanity check
                                 },
 

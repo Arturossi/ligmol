@@ -87,8 +87,12 @@ def hist_post(request):
             response_data['mincutoff'] = mincutoff
             response_data['maxcutoff'] = maxcutoff
             #response_data['histData'] = histogram
+
+            size = 0
             
             if names:
+                size = (len(names) + 1) * spacing
+
                 toPrint = "\n\tvar chart = c3.generate({\n\t\tbindto: '#show-histogram',\n\t\tdata: {\n\t\t\tcolumns: [\n\t"
 
                 dataslen = len(datas) - 1
@@ -113,8 +117,8 @@ def hist_post(request):
                 
                 size = (len(names) + 1) * spacing
 
-                if size < 300:
-                    toPrint = toPrint + "300"        
+                if size < 400:
+                    toPrint = toPrint + "400"
                 else:
                     toPrint = toPrint + str(size)
 
@@ -133,6 +137,15 @@ def hist_post(request):
                 toPrint = "alert('No results matching your filter!');"
             
             response_data["script"] = toPrint
+
+            if names:
+                if size < 400:
+                    response_data["style"]= "\n\t.html2canvas-container\n\t{\n\t\twidth: " + str(400) + "px !important;\n\t\theight: 600px !important;\n\t}"
+                else:
+                    response_data["style"]= "\n\t.html2canvas-container\n\t{\n\t\twidth: " + str(size) + "px !important;\n\t\theight: 600px !important;\n\t}"
+            else:
+                response_data["style"]=""
+
 
             return HttpResponse(
                 json.dumps(response_data),
