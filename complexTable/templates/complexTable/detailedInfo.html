@@ -216,7 +216,7 @@
                     <style id="hist-style">
                         .html2canvas-container
                         {
-                            width: {{ histogram|getItem:'dsize' }}px !important;
+                            width: 30px !important;/*{{ histogram|getItem:'dsize' }}px !important;*/
                             height: 600px !important;
                         }
                     </style>
@@ -225,7 +225,7 @@
                         $('#hist-form').on('submit', function(event){
                             event.preventDefault();
                             console.log("form submitted!")  // sanity check
-                            if($("#id_mincutoff").val() > $("#id_maxcutoff").val())
+                            if(parseFloat($("#id_mincutoff").val()) > parseFloat($("#id_maxcutoff").val()) && ($("#id_maxcutoff").val() != "" || $("#id_maxcutoff").val() != ""))
                             {
                                 alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
                             }
@@ -258,7 +258,7 @@
                                     $("#hist-style").prepend(data['style']);
 
                                     eval(document.getElementById("hist-code").innerHTML);
-                                    eval(document.getElementById("hist-style").innerHTML);
+                                    //eval(document.getElementById("hist-style").innerHTML);
 
                                     console.log("success"); // another sanity check
                                 },
