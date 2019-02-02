@@ -20,5 +20,5 @@ from . import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('complexTable/', include('complexTable.urls')),
+    path('', include('complexTable.urls')),
 ]#+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -13,25 +13,35 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'complexTable/custom.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="{% static 'complexTable/js/sorttable.js' %}"></script>
+    <!-- <script src="{% static 'complexTable/js/sorttable.js' %}"></script> -->
+    <script src="{% static 'complexTable/js/saveSvgAsPng.js' %}"></script>
     
     <link rel="stylesheet" href="{% static 'complexTable/c3.min.css' %}">
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="{% static 'complexTable/js/c3.js' %}"></script>
     <script src="{% static 'complexTable/js/html2canvas.min.js' %}"></script>
     <script>
+        
+        function exportChartToPng(chartID){
+            //fix weird back fill
+            d3.select('#'+chartID).selectAll("path").attr("fill", "none");
+            //fix no axes
+            d3.select('#'+chartID).selectAll("path.domain").attr("stroke", "black");
+            //fix no tick
+            d3.select('#'+chartID).selectAll(".tick line").attr("stroke", "black");
+            var svgElement = $('#'+chartID).find('svg')[0];
+            saveSvgAsPng(svgElement, chartID+'.png', { backgroundColor: "#FFFFFF"});
+        }
+
         $(document).ready(function() {
             document.getElementById("exportHistogram").addEventListener("click", function() {
+                alert("Processing Histogram image.\nPlease, be patient, this might take a while.")
+                exportChartToPng("show-histogram");
+            });
 
-            html2canvas(document.querySelector('#show-histogram'),{
-                    letterRendering: 1,
-                    allowTaint: true,
-                    width: $('#show-histogram > svg').width(),//{{ histogram|getItem:"dsize" }},
-                    height: 600
-                }).then(function(canvas) {
-                    console.log(canvas);
-                    saveAs(canvas.toDataURL(), 'histogram.png');
-                });
+            document.getElementById("exportTimeSeries").addEventListener("click", function() {
+                alert("Processing Time Series image.\nPlease, be patient, this might take a while.")
+                exportChartToPng("show-timeSeries");
             });
 
             function saveAs(uri, filename) {
@@ -82,7 +92,11 @@
                     <div class="panel panel-default text-center" id="ligandNgl">
                         <script src="https://unpkg.com/ngl"></script>
                         <script>
-                            var loadFileUrl = "{% static 'data/mols/CFF.cif' %}";
+                            // var loadFileUrl = "{% static 'summary/CB7-G01/resp/complex/imaged.nc' %}";
+                            // var loadFileUrl = "{% static 'data/mols/CFF.cif' %}";
+                            var loadFileUrl = "{% static 'data/mols/BCD.cif' %}";
+                            var loadTrajUrl = "{% static 'summary/CB7-G01/resp/host/imaged.nc' %}";
+                            
                             document.addEventListener("DOMContentLoaded", function() {
                                 function e() {
                                     return d ? "not _h and " + r : r
@@ -123,7 +137,18 @@
                                         xOffset: .1,
                                         yOffset: .1,
                                         radius: 1.4
-                                    }), i(), o(), u.autoView(1)
+                                    });
+                                    i();
+                                    o();
+                                    // var traj = new Trajectory(loadTrajUrl, u)
+                                    // var player = new TrajectoryPlayer(traj, {
+                                    //     step: 1,
+                                    //     timeout: 500,
+                                    //     start: 0,
+                                    //     end: traj.numframes
+                                    //     });
+                                    // player.play();
+                                    u.autoView(1);
                                 });
                                 var f = !1;
                                 n(), document.getElementById("nglRotateBtn").addEventListener("click", n), document.getElementById("nglLabelsBtn").addEventListener("click", i), document.getElementById("nglHydrogensBtn").addEventListener("click", o)
@@ -144,13 +169,14 @@
                 </div>
             </div>
         </section>
-        <section style="width: 100%; height: 780px; overflow-y: hidden; overflow-x: hidden;">
+        <section style="width: 100%; height: 880px; overflow-y: hidden; overflow-x: hidden;">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <span style="width: 50px;"></span>
                 <li class="nav-item">
                     <a class="nav-link active" id="twodmap-tab" data-toggle="tab" href="#twodmap" role="tab" aria-controls="twodmap" aria-selected="true">2D Map</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                    <a class="nav-link" id="timeSeries-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Time Series</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="histogram-tab" data-toggle="tab" href="#histogram" role="tab" aria-controls="histogram" aria-selected="false">histogram</a>
@@ -161,8 +187,57 @@
             </ul>
                     
             <div class="tab-content">
+                <style id="canvas-style">
+                    
+                </style>
                 <div class="tab-pane fade high show active text-center" id="twodmap" role="tabpanel" aria-labelledby="twodmap-tab"><img src="{% static 'data/dats/2D_map.png' %}" style="height: 600px; width: 800px;" class="img-fluid" alt="2D Map"></div>
-                <div class="tab-pane fade high" id="profile" role="tabpanel" aria-labelledby="profile-tab">2</div>
+                <div class="tab-pane fade high" id="profile" role="tabpanel" aria-labelledby="timeSeries-tab">
+                    <div class="border-bottom">
+                        <input id="exportTimeSeries" type="button" value="Export graphic as image" class="mx-4 my-2"></input>
+                    </div>
+                    <div style="width:auto;">
+                        <style>
+                            svg {
+                                display: block;
+                                margin: auto;
+                            }
+                        </style>
+                        <div id="show-timeSeries" class="center" style="width: auto; overflow-x: auto; margin-left: 10px; margin-right: 10px;"></div>
+                    </div>
+                    <script id="ts-code">
+                        var ts = c3.generate({
+                            bindto: '#show-timeSeries',
+                            data: {
+                                x: '{{ timeSeries|getItem:"x" }}',
+                                columns: [
+                                    {% for data in timeSeries|getItem:'datas' %}[{% for info in data %}{% if forloop.first %}'{{ info }}'{% else %}{{ info }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %}, 
+                                    {% endif %}{% endfor %}
+                                ]
+                            },
+                            size: {
+                                height: 700,
+                                width: {{ timeSeries|getItem:'dsize' }}
+                            },
+                            axis: {
+                                x: {
+                                    tick: {
+                                        rotate: 60,
+                                        culling: {
+                                          max: 300
+                                        },
+                                        multiline: false
+                                    },
+                                    padding: 0.01
+                                }
+                            },
+                            padding: {
+                                bottom: 20,
+                                right: 20
+                            }
+                        });
+                    </script>
+                    
+                </div>
                 <div class="tab-pane fade high" id="histogram" role="tabpanel" aria-labelledby="histogram-tab" style="height: 900px;">
                     <div class="border-bottom">
                         <input id="exportHistogram" type="button" value="Export graphic as image" class="mx-4 my-2"></input>
@@ -198,28 +273,27 @@
                                 width: {{ histogram|getItem:'dsize' }}
                             },
                             padding: {
-                                    bottom: 80 // add 10px for some spacing
+                                    bottom: 80,
+                                    right: 20
                             },
                             axis: {
                                 x: {
                                     type: 'category',
+                                    tick: {
+                                        rotate: 60,
+                                        multiline: false
+                                    },
                                     categories: [{% for name in histogram|getItem:'names' %}'{{ name }}'{% if not forloop.last %}, {% endif %}{% endfor %}]
                                 }
                             },
                             bar: {
                                 width: {
-                                    ratio: 0.7 // this makes bar width 50% of length between ticks
+                                    ratio: 0.7
                                 }
                             }
                         });
                     </script>
-                    <style id="hist-style">
-                        .html2canvas-container
-                        {
-                            width: 30px !important;/*{{ histogram|getItem:'dsize' }}px !important;*/
-                            height: 600px !important;
-                        }
-                    </style>
+                    
                     <script>
                         // Submit post on submit
                         $('#hist-form').on('submit', function(event){
@@ -250,15 +324,15 @@
                                     console.log(json); // log the returned json to the console
                                     
                                     $("#hist-code").empty(); // Remove data from hist-code DOM
-                                    $("#hist-style").empty(); // Remove data from hist-code DOM
+                                    $("#canvas-style").empty(); // Remove data from hist-code DOM
                                     $("#show-histogram").empty(); // Remove data from hist-code DOM
                                     
                                     var data = json;//JSON.parse(json);
                                     $("#hist-code").prepend(data['script']);
-                                    $("#hist-style").prepend(data['style']);
+                                    $("#canvas-style").prepend(data['style']);
 
                                     eval(document.getElementById("hist-code").innerHTML);
-                                    //eval(document.getElementById("hist-style").innerHTML);
+                                    //eval(document.getElementById("canvas-style").innerHTML);
 
                                     console.log("success"); // another sanity check
                                 },

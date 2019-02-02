@@ -1,7 +1,7 @@
 # Django imports
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views import generic
+from django.views import generic, FormView
 from django.conf import settings
 from django.template.defaulttags import register
 from django.http import HttpResponse, Http404
@@ -10,7 +10,7 @@ from django.http import HttpResponse, Http404
 from complexTable.models import Complex
 
 from complexTable.models import PostHistogram
-from complexTable.forms import HistForm
+from complexTable.forms import HistForm, CheckForm
 
 # Python imports
 from ast import literal_eval
@@ -21,10 +21,16 @@ import re
 import csv
 import json
 import logging
+import tarfile
 
+# Graphic spacing variables
 spacing = 15
+tsSpacing = 5
 
+# Logger to log
 logger = logging.getLogger(__name__)
+
+# region Graphic filters
 
 def hist_post(request):
     if request.method == 'POST':
@@ -118,11 +124,14 @@ def hist_post(request):
                 size = (len(names) + 1) * spacing
 
                 if size < 400:
-                    toPrint = toPrint + "400"
+                    if size < 380:
+                        toPrint = toPrint + "400"
+                    else:
+                        toPrint = toPrint + str(420-size)
                 else:
                     toPrint = toPrint + str(size)
 
-                toPrint = toPrint + "\n\t\t},\n\t\tpadding: {\n\t\t\tbottom: 80\n\t\t},\n\t\taxis: {\n\t\t\tx: {\n\t\t\t\ttype: 'category',\n\t\t\t\tcategories: ["
+                toPrint = toPrint + "\n\t\t},\n\t\tpadding: {\n\t\t\tbottom: 80,\n\t\t\tright: 20\n\t\t},\n\t\taxis: {\n\t\t\tx: {\n\t\t\t\ttype: 'category',\n\t\t\t\ttick: {\n\t\t\t\t\trotate: 60,\n\t\t\t\t\tmultiline: false\n\t\t\t\t},\n\t\t\t\tcategories: ["
                 
                 nameslen = len(names) - 1
 
@@ -157,36 +166,40 @@ def hist_post(request):
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+# endregion
 
-def isHex(s):
-    try:
-        int(s, 16)
-        return True
+# region Parse files
 
-    except:
-        return False
+def parseTimeseries():
+    path = os.path.join(settings.FILES_DIR, 'dats/timeseries.csv')
 
-def readfile(path):
-    info = []
+    info = readfile(path)
 
-    with open(path) as f:
-        for line in f:
-            line = line.strip()
-            datas = list(filter(None, re.split(',| |\t|\n', line)))
-            parsedLine = []
+    remInfo = []
 
-            for data in datas:
-                if isHex(data):
-                    parsedLine.append(data)
-                else:
-                    try:
-                        parsedLine.append(literal_eval(data))
-                    except:
-                        parsedLine.append(data)
+    while info[-1][0] == '#':
+        remInfo.append(info[-1])
+        del info[-1]
+    
+    names = []
+    datas = []
 
-            info.append(parsedLine)
-            
-    return info
+    for index, line in enumerate(info):
+        if index == 0:
+            names = line#list(filter(None, re.split(',| |\t|\n', line)))
+        else:
+            datas.append(line)
+            # datas.append(list(filter(None, re.split(',| |\t|\n', line))))
+
+    datas = list(map(list, zip(*datas)))
+
+    datasize = len(datas[0]) * tsSpacing
+
+    
+    for index, line in enumerate(datas):
+        line.insert(0, names[index])
+
+    return {"names": names, "x": names[0], "datas": datas, "dsize": datasize}
 
 def parseHistogram():
     path = os.path.join(settings.FILES_DIR, 'dats/histogram.dat')
@@ -203,37 +216,19 @@ def parseHistogram():
     datas = list(map(list, zip(*datas)))
 
     datasize = len(datas[0]) * spacing
+    
+    if datasize < 400:
+        if datasize < 380:
+            datasize = 400
+        else:
+            datasize = 420 - datasize
+    else:
+        datasize = datasize + 20
 
     for index, line in enumerate(datas):
         line.insert(0, "Data "+ str(index))
 
     return {"names": names, "datas": datas, "dsize": datasize}
-
-# Function to round floats
-def tryToRound(val, elems):
-    """
-    Try to round the passed value if is float, otherwise return the value itself.
-    """
-    try:
-        value = literal_eval(val)
-        if isinstance(value, int):
-            return val
-        return round(value, elems)
-    except:
-        return val
-
-
-def download(request):
-    """
-    Function to download a file
-    """
-    file_path = os.path.join(settings.FILES_DIR, 'summary/BCD-ACA/resp/complex/complex.prmtop')
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/octet-stream")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
-    raise Http404("File not Found")
 
 def parseCSV():
     path = os.path.join(settings.FILES_DIR, 'database.csv')
@@ -259,6 +254,127 @@ def parseCSV():
 
     return (dataInfo, keys)
 
+# endregion
+
+# region Auxiliar functions
+
+def readfile(path):
+    """
+    Read file from path, split the lines with commas, whitespaces, \t and \n
+        then return a list (lines) of lists (splited values from lines).
+    """
+
+    # Empty list to hold lists of lines
+    info = []
+
+    # Open file using the with environment
+    with open(path) as f:
+        # For each line in file
+        for line in f:
+            # Remove whitespaces from beggining and end of line
+            line = line.strip()
+
+            # Split the line using commas, whitespaces. \t and \n and return a list
+            datas = list(filter(None, re.split(',| |\t|\n', line)))
+
+            # Instantiate a new list to hold line datas after parse them (from string to int or float)
+            parsedLine = []
+
+            # for each element in line
+            for data in datas:
+                # Check if is Hexadecimal ()
+                if isHex(data):
+                    # If is, do not parse and append directly
+                    parsedLine.append(data)
+                else:
+                    # Try to append parsing
+                    try:
+                        parsedLine.append(literal_eval(data))
+                    # Since non numbers parsing throws exception, append the value as string
+                    except:
+                        parsedLine.append(data)
+            # Add the line to list of lines
+            info.append(parsedLine)
+            
+    return info
+
+def isHex(s):
+    """
+    Check if value passed is Hexadecimal or not
+    """
+    try:
+        int(s, 16)
+        return True
+
+    except:
+        return False
+
+def tryToRound(val, elems):
+    """
+    Try to round the passed value if is float, otherwise return the value itself.
+    """
+    try:
+        value = literal_eval(val)
+        if isinstance(value, int):
+            return val
+        return round(value, elems)
+    except:
+        return val
+
+# endregion
+
+
+def download(request):
+    """
+    Function to download a file
+    """
+    file_path = os.path.join(settings.FILES_DIR, 'summary/BCD-ACA/resp/complex/complex.prmtop')
+    downloadFile(file_path)
+    
+
+def downloadFile(path):
+    """
+    Download a file trough http procotol from given path
+    """
+    if os.path.exists(path):
+        with open(path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/octet-stream")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(path)
+            return response
+    raise Http404("File not Found")
+
+def downloadFiles(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = NameForm(request.POST)
+        
+        # check whether it's valid:
+        if form.is_valid():
+            tmpPath = os.path.join(settings.FILES_DIR, 'tmp/')
+            ids = form.cleaned_data['ids']
+
+            tar = tarfile.open("datas.tar.gz", "w:gz")
+
+            for item in ids:
+                tar.add()
+
+
+            downloadFile()
+            #return HttpResponseRedirect('/thanks/')
+
+class downStuff(FormView):
+    form_class = CheckForm
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+
+        tar = tarfile.open("datas.tar.gz", "w:gz")
+
+        for item in form.POST.getlist('ids'):
+            a
+
+        tar.close()
+
 # Index 
 class IndexView(generic.ListView):
     template_name = 'complexTable/index.html'
@@ -273,6 +389,7 @@ class IndexView(generic.ListView):
 class ComplexView(generic.ListView):
         #template_name = 'complexTable/complexTable.html'
         #model = Complex
+        form_class = CheckForm
 
         # @register.filter
         # def getItem(dictionary, key):
@@ -304,14 +421,15 @@ class DetailedView(generic.ListView):
         data = parseCSV()
 
         histogram = parseHistogram()
+        timeSeries = parseTimeseries()
 
         variables = {
             "histForm": HistForm,
             'info': data[0][lineId],
             'keys': data[1],
             'bigID': lineId,
-            #'histogram': json.dumps(histogram),
-            'histogram': histogram
+            'histogram': histogram,
+            'timeSeries': timeSeries
             }
 
         return render(request, 'complexTable/detailedInfo.html', variables)
