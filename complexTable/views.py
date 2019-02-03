@@ -1,10 +1,11 @@
 # Django imports
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views import generic, FormView
+from django.views import generic
 from django.conf import settings
 from django.template.defaulttags import register
 from django.http import HttpResponse, Http404
+from django.views.generic.edit import FormView
 
 # Models import
 from complexTable.models import Complex
@@ -244,7 +245,11 @@ def parseCSV():
                 elif key == "":
                     localData["ID"] = tryToRound(value, 2)
                 else:
-                    localData[key] = tryToRound(value, 2)
+                    try:
+                        localData[key.lower()] = tryToRound(value, 2)
+                    except:
+                        localData[key] = tryToRound(value, 2)
+                        
 
         # dataInfo.append(localData)
         dataInfo[str(idx)] = localData
@@ -344,36 +349,57 @@ def downloadFile(path):
     raise Http404("File not Found")
 
 def downloadFiles(request):
+    data = parseCSV()
+
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = NameForm(request.POST)
-        
+        form = CheckForm(request.POST)
+
         # check whether it's valid:
         if form.is_valid():
-            tmpPath = os.path.join(settings.FILES_DIR, 'tmp/')
-            ids = form.cleaned_data['ids']
+            ids = form.cleaned_data['choices']
 
-            tar = tarfile.open("datas.tar.gz", "w:gz")
+            response = HttpResponse(content_type='application/x-gzip')
+            response['Content-Disposition'] = 'attachment; filename=datas.tar.gz'
+            tar = tarfile.open(fileobj=response, mode="w:gz")
 
-            for item in ids:
-                tar.add()
+            paths = set()
 
+            for id in ids:
+                if not isinstance(data[0][id], list):
+                    path = os.path.join(settings.FILES_DIR, ''.join(['summary/', data[0][id]['complex'].upper(), '/']))
+                    if path not in paths:
+                        tar.add(path, arcname=data[0][id]['complex'].upper())
+                    paths.add(path)
+                        
 
-            downloadFile()
+            logger.warn(paths)
+            # for path in paths:
+
+            tar.close()
+            return response
+
+    variables = {
+        "checkForm": CheckForm,
+        'table': data[0],
+        'keys': data[1]
+        }
+
+    return render(request, 'complexTable/complexTable.html', variables)
             #return HttpResponseRedirect('/thanks/')
 
-class downStuff(FormView):
-    form_class = CheckForm
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data()
+# class downStuff(FormView):
+#     form_class = CheckForm
+#     def post(self, request, *args, **kwargs):
+#         context = self.get_context_data()
 
-        tar = tarfile.open("datas.tar.gz", "w:gz")
+#         tar = tarfile.open("datas.tar.gz", "w:gz")
 
-        for item in form.POST.getlist('ids'):
-            a
+#         for item in form.POST.getlist('ids'):
+#             a
 
-        tar.close()
+#         tar.close()
 
 # Index 
 class IndexView(generic.ListView):
@@ -389,7 +415,7 @@ class IndexView(generic.ListView):
 class ComplexView(generic.ListView):
         #template_name = 'complexTable/complexTable.html'
         #model = Complex
-        form_class = CheckForm
+        # form_class = CheckForm
 
         # @register.filter
         # def getItem(dictionary, key):
@@ -403,6 +429,7 @@ class ComplexView(generic.ListView):
             data = parseCSV()
 
             variables = {
+                "checkForm": CheckForm,
                 'table': data[0],
                 'keys': data[1]
                 }
@@ -416,7 +443,7 @@ def getItem(dictionary, key):
 class DetailedView(generic.ListView):
     def get(self, request, **kwargs):
 
-        lineId = request.GET.get('id')
+        #lineId = request.GET.get('id')
 
         data = parseCSV()
 

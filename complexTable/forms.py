@@ -1,5 +1,5 @@
 from django import forms
-from complexTable.models import PostHistogram
+# from complexTable.models import PostHistogram
 
 class HistForm(forms.Form):
     mincutoff = forms.FloatField(label='min cutoff', required=False)
@@ -7,6 +7,6 @@ class HistForm(forms.Form):
 
 class CheckForm(forms.Form):
     choices = forms.MultipleChoiceField(
-        # choices = LIST_OF_VALID_CHOICES, # this is optional
-        widget  = forms.CheckboxSelectMultiple,
+        widget = forms.CheckboxSelectMultiple(),
+        choices = list(map(list, zip(*[list(range(0, 100000)),list(range(0, 100000))])))
     )

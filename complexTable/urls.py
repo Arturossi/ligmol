@@ -9,6 +9,7 @@ urlpatterns = [
     path('complexTable', views.ComplexView.as_view(), name='complexTable'),
     path('detailedInfo', views.DetailedView.as_view(), name='detailedInfo'),
     path('download', views.download, name='download'),
+    path('downloadFiles', views.downloadFiles, name='downloadFiles'),
     path('hist_post', views.hist_post, name='hist_post'),
     # path('api/histogram', views.get_histogram, name='histogram-data')
     #path('<int:pk>/results/', views.ResultsView.as_view(), name='results'),
