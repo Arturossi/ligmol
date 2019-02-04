@@ -443,7 +443,7 @@ def getItem(dictionary, key):
 class DetailedView(generic.ListView):
     def get(self, request, **kwargs):
 
-        #lineId = request.GET.get('id')
+        lineId = request.GET.get('id')
 
         data = parseCSV()
 

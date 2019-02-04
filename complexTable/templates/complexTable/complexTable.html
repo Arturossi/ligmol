@@ -47,26 +47,19 @@
                             <tr>
                                 <th scope="col" valign="center"><input valign="center" style="margin-left: 12px;" type="checkbox" name="checkAll" id="select_all" onClick="toggle(this)"></th>
                                 {% for key in keys %}
-                                    {% if key != "LiNk" %}
-                                        <th scope="col"valign="center" >{% if key == '' %} # {% else %}{{ key }}{% endif %}</th>
-                                    {% endif %}
+                                <th scope="col"valign="center" >{% if key == '' %} # {% else %}{{ key }}{% endif %}</th>
                                 {% endfor %}
-                                <!-- <th scope="col" valign="center"> </th> -->
                             </tr>
                         </thead>
                         <tbody id='compoundBody'>
                             {% for bigID, orderDict in table.items %}
-                                <!-- <tr class='limitedHeight' onclick="location.href='{% url 'complexTable:detailedInfo' %}?id={{ bigID }}'"> -->
                                 <tr class='limitedHeight' onclick="showMeDetails({{ bigID }})">
-                                <!-- <tr class='limitedHeight' onclick="showMeDetails({{ bigID }})"> -->
                                     <td class='center' valign="center"'>
-                                        <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="{{ checkForm.choices.name }}" id="choicesID" value="{{ bigID }}">
-                                        <!-- <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="ids" value="{{ bigID }}"> -->
+                                        <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="{{ bigID }}">
                                     </td>
                                     {% for key, val in orderDict.items %}
                                     <td class="clickable" style="cursor: pointer"; valign="center">{{ val }}</td>
                                     {% endfor %}
-                                    <!-- <td valign="center"'><input value="Download" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input></td> -->
                                 </tr>
                             {% endfor %}
                         </tbody>
