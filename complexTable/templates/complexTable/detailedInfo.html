@@ -87,6 +87,89 @@
             <div class="row">
                 <div class="col-md-4 col-sm-12 panel panel-default text-center">
                     <input value="Return" type="button" onclick="location.href='{% url 'complexTable:complexTable' %}'" class="btn"></input>
+                    <div class="flip-card text-center" style="height: 580px; width: 400px; margin-left: 200px; margin-top: 20px;">
+                        <div class="flip-card-inner border rounded" style="height: 580px; width: 400px;">
+                            <div class="flip-card-front" >
+                                <img src="{% static 'data/mols/caffeine/CFF.png' %}" alt="Avatar"  style="width:200px;height:200px;">
+                                <table class="table table-bordered table-condensed" id="chemicalDetails">
+                                    <tr class="active">
+                                        <th colspan="2">
+                                            <h5>Chemical Details</h5>
+                                        </th>
+                                    </tr>
+                                    <tr id="chemicalFormalCharge" style="height:25px;">
+                                        <th>Formal Charge</th>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr id="chemicalAtomCount" style="height:25px;">
+                                        <th>Atom Count</th>
+                                        <td>24</td>
+                                    </tr>
+                                    <tr id="chemicalChiralAtomCount" style="height:25px;">
+                                        <th>Chiral Atom Count</th>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr id="chemicalChiralAtoms" style="height:25px;">
+                                        <th>Chiral Atoms</th>
+                                        <td>n/a</td>
+                                    </tr>
+                                    <tr id="chemicalBondCount" style="height:25px;">
+                                        <th>Bond Count</th>
+                                        <td>25</td>
+                                    </tr>
+                                    <tr id="chemicalAromaticAtomCount" style="height:25px;">
+                                        <th>Aromatic Bond Count</th>
+                                        <td>10</td>
+                                    </tr>
+                                    <tr id="chemicalLeavingAtoms" style="height:25px;">
+                                        <th>Leaving Atoms</th>
+                                        <td>n/a</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="flip-card-back">
+                                <table class="table table-bordered table-condensed" id="chemicalComponentSummary" style="table-layout: fixed; width: 100%">
+                                    <tr class="active">
+                                        <th colspan="2">
+                                            <h4>Chemical Component Summary</h4>
+                                        </th>
+                                    </tr>
+                                    <tr id="chemicalName">
+                                        <th>Name</th>
+                                        <td>CAFFEINE</td>
+                                    </tr>
+                                    <tr id="chemicalIdentifiers">
+                                        <th>Identifiers</th>
+                                        <td style="word-wrap: break-word">1,3,7-trimethylpurine-2,6-dione</td>
+                                    </tr>
+                                    <tr id="chemicalFormula">
+                                        <th>Formula</th>
+                                        <td>C<sub>8</sub> H<sub>10</sub> N<sub>4</sub> O<sub>2</sub></td>
+                                    </tr>
+                                    <tr id="chemicalMolecularWeight">
+                                        <th>Molecular Weight</th>
+                                        <td>194.19</td>
+                                    </tr>
+                                    <tr id="chemicalType">
+                                        <th>Type</th>
+                                        <td>NON-POLYMER</td>
+                                    </tr>
+                                    <tr id="chemicalIsomeric">
+                                        <th>Isomeric SMILES</th>
+                                        <td style="word-wrap: break-word">Cn1cnc2n(C)c(=O)n(C)c(=O)c12</td>
+                                    </tr>
+                                    <tr id="chemicalInChI">
+                                        <th>InChI</th>
+                                        <td style="word-wrap: break-word">InChI=1S/C8H10N4O2/c1-10-4-9-6-5(10)7(13)12(3)8(14)11(6)2/h4H,1-3H3</td>
+                                    </tr>
+                                    <tr id="chemicalInChIKey">
+                                        <th>InChIKey</th>
+                                        <td>RYYVLZVUVIJVGH-UHFFFAOYSA-N</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-4 col-sm-12">
                     <div class="panel panel-default text-center" id="ligandNgl">
@@ -176,7 +259,7 @@
                     <a class="nav-link active" id="twodmap-tab" data-toggle="tab" href="#twodmap" role="tab" aria-controls="twodmap" aria-selected="true">2D Map</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="timeSeries-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Time Series</a>
+                    <a class="nav-link" id="timeSeries-tab" data-toggle="tab" href="#timeSeries" role="tab" aria-controls="timeSeries" aria-selected="false">Time Series</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="histogram-tab" data-toggle="tab" href="#histogram" role="tab" aria-controls="histogram" aria-selected="false">histogram</a>
@@ -190,8 +273,10 @@
                 <style id="canvas-style">
                     
                 </style>
-                <div class="tab-pane fade high show active text-center" id="twodmap" role="tabpanel" aria-labelledby="twodmap-tab"><img src="{% static 'data/dats/2D_map.png' %}" style="height: 600px; width: 800px;" class="img-fluid" alt="2D Map"></div>
-                <div class="tab-pane fade high" id="profile" role="tabpanel" aria-labelledby="timeSeries-tab">
+                <div class="tab-pane fade high show active text-center" id="twodmap" role="tabpanel" aria-labelledby="twodmap-tab">
+                    
+                </div>
+                <div class="tab-pane fade high" id="timeSeries" role="tabpanel" aria-labelledby="timeSeries-tab">
                     <div class="border-bottom">
                         <input id="exportTimeSeries" type="button" value="Export graphic as image" class="mx-4 my-2"></input>
                     </div>
@@ -349,12 +434,6 @@
                 </div>
                 <div class="tab-pane fade high" id="settings" role="tabpanel" aria-labelledby="settings-tab">4</div>
             </div>
-                    
-            <!-- <script>
-                $(function () {
-                    $('#myTab li:last-child a').tab('show')
-                })
-            </script> -->
         </section>
     <footer>
         <div class="container text-center">

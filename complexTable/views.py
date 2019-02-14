@@ -16,6 +16,10 @@ from complexTable.forms import HistForm, CheckForm
 # Python imports
 from ast import literal_eval
 from wsgiref.util import FileWrapper
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib.dates import DateFormatter
 
 import os
 import re
@@ -23,6 +27,8 @@ import csv
 import json
 import logging
 import tarfile
+import pandas as pd
+import seaborn as sns
 
 # Graphic spacing variables
 spacing = 15
@@ -259,6 +265,173 @@ def parseCSV():
 
     return (dataInfo, keys)
 
+def parse2Dmap():
+    path = os.path.join(settings.FILES_DIR, 'dats/2D_map.dat')
+
+    df = pd.read_csv(path, delim_whitespace=True, header=None)
+
+    # Configuracao
+    minimo=4.0
+    maximo=50.0
+
+    # Filtro para os dados.
+    df = df[(df > minimo) & (df < maximo)].dropna(axis='columns')
+
+    return df
+    
+
+# endregion
+
+# region 2dGraphic generating functions
+
+def simplePlot(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # plot simples.
+    df.plot(figsize=(10,5))
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+    return response
+
+def runningAvg(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # Agora apenas a "running average" a cada 100 passos.
+    df.rolling(window=100).mean().plot(figsize=(10,5))
+    
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+    
+    return response
+
+def heatMap(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # Plot as a heatmap. ( não sei arrumar os xticks )
+    plt.figure(figsize = (15,5))  # Truque para arrumar o tamanho da figura.
+    sns.heatmap(df.transpose(), cmap="viridis")
+
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+def distribStrip(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # Plot as a heatmap. ( não sei arrumar os xticks )
+    plt.figure(figsize = (15,5))  # Truque para arrumar o tamanho da figura.
+    sns.catplot(data=df.melt(), x='variable', y='value', kind='strip', aspect=2)
+
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+def distribBox(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # Plot as a heatmap. ( não sei arrumar os xticks )
+    plt.figure(figsize = (15,5))  # Truque para arrumar o tamanho da figura.
+    sns.catplot(data=df.melt(), x='variable', y='value', kind='box', aspect=2)
+
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+def distribViolin(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # Plot as a heatmap. ( não sei arrumar os xticks )
+    plt.figure(figsize = (15,5))  # Truque para arrumar o tamanho da figura.
+    sns.catplot(data=df.melt(), x='variable', y='value', kind='violin', aspect=2)
+
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+def facetGrids(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # col = coluna
+    # hue = cores
+    # col_wrap = maximo por coluna.
+    # sharey = compartilhar o eixo Y.
+    g=sns.FacetGrid(data=df.melt(),col='variable',col_wrap=3,sharey=False)
+    g.map(plt.plot,'value')
+
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+def facetGridsRolling(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # col = coluna
+    # hue = cores
+    # col_wrap = maximo por coluna.
+    # sharey = compartilhar o eixo Y.
+    g=sns.FacetGrid(data=df.rolling(window=100).mean().melt(),col='variable',col_wrap=3,sharey=False)
+    g.map(plt.plot,'value')
+
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+def facetGridsDistPlot(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # col = coluna
+    # hue = cores
+    # col_wrap = maximo por coluna.
+    # sharey = compartilhar o eixo Y.
+    g=sns.FacetGrid(data=df.melt(),hue='variable',aspect=4)
+    g.map(sns.distplot,'value',hist=False)
+
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+def facetGridsSeparate(request):
+    df = parse2Dmap()
+    fig = Figure()
+
+    # col = coluna
+    # hue = cores
+    # col_wrap = maximo por coluna.
+    # sharey = compartilhar o eixo Y.
+    g=sns.FacetGrid(data=df.melt(),col='variable',col_wrap=3,hue='variable',aspect=1)
+    g.map(sns.distplot,'value',hist=False)
+
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
 # endregion
 
 # region Auxiliar functions
@@ -457,6 +630,7 @@ class DetailedView(generic.ListView):
             'bigID': lineId,
             'histogram': histogram,
             'timeSeries': timeSeries
+            #'2Dmap'
             }
 
         return render(request, 'complexTable/detailedInfo.html', variables)
