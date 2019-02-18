@@ -101,9 +101,9 @@ def hist_post(request):
 
             response_data = {}
 
-            response_data['result'] = 'Create post successful!'
-            response_data['mincutoff'] = mincutoff
-            response_data['maxcutoff'] = maxcutoff
+            # response_data['result'] = 'Create post successful!'
+            # response_data['mincutoff'] = mincutoff
+            # response_data['maxcutoff'] = maxcutoff
             #response_data['histData'] = histogram
 
             size = 0
@@ -183,19 +183,17 @@ def line2d_post(request):
     if request.method == 'POST':
         form = TwodmapFormLine(request.POST)
         if form.is_valid():
-            logger.warn(form.cleaned_data)
             mincutoff2d = form.cleaned_data['mincutoff2d']
             maxcutoff2d = form.cleaned_data['maxcutoff2d']
             choice = form.cleaned_data['types2d']
 
             response_data = {}
 
-            response_data['result'] = 'Create post successful!'
-            response_data['mincutoff2d'] = mincutoff2d
-            response_data['maxcutoff2d'] = maxcutoff2d
+            # response_data['result'] = 'Create post successful!'
+            # response_data['mincutoff2d'] = mincutoff2d
+            # response_data['maxcutoff2d'] = maxcutoff2d
             alt = ''
             l2d = ''
-            style = ''
 
             if choice == "simple":
                 l2d = simplePlot(mincutoff2d, maxcutoff2d)
@@ -204,9 +202,9 @@ def line2d_post(request):
             else:
                 l2d = runningAvg(mincutoff2d, maxcutoff2d)
                 alt = '2D running average line graphic'
-                style='style="height: 40%; width: 40%;"'
                 
-            response_data['line2d'] = '<img src="data:image/png;base64, ' + l2d + '" alt="' + alt + '" ' + style + '/>'
+            response_data['line2d'] = '<img src="data:image/png;base64, ' + l2d + '" id="line-img" alt="' + alt + '"/>'
+            plt.close('all')
 
             return HttpResponse(
                 json.dumps(response_data),
@@ -228,17 +226,18 @@ def heat2d_post(request):
     if request.method == 'POST':
         form = TwodmapFormHeat(request.POST)
         if form.is_valid():
-            logger.warn(form.cleaned_data)
             mincutoffheat2d = form.cleaned_data['mincutoffheat2d']
             maxcutoffheat2d = form.cleaned_data['maxcutoffheat2d']
 
             response_data = {}
 
-            response_data['result'] = 'Create post successful!'
-            response_data['mincutoff2d'] = mincutoffheat2d
-            response_data['maxcutoff2d'] = maxcutoffheat2d
+            # response_data['result'] = 'Create post successful!'
+            # response_data['mincutoff2d'] = mincutoffheat2d
+            # response_data['maxcutoff2d'] = maxcutoffheat2d
                 
-            response_data['heat2d'] = '<img src="data:image/png;base64, ' + heatMap(mincutoffheat2d, maxcutoffheat2d) + '" alt="2D map heatmap" style="width: 1500px; height: 500px;"/>'
+            response_data['heat2d'] = '<img src="data:image/png;base64, ' + heatMap(mincutoffheat2d, maxcutoffheat2d) + '" id="heat-img" alt="2D map heatmap"/>'
+            
+            plt.close('all')
 
             return HttpResponse(
                 json.dumps(response_data),
@@ -260,35 +259,32 @@ def distrib2d_post(request):
     if request.method == 'POST':
         form = TwodmapFormDistrib(request.POST)
         if form.is_valid():
-            logger.warn(form.cleaned_data)
             mincutoff2d = form.cleaned_data['mincutoffdistrib2d']
             maxcutoff2d = form.cleaned_data['maxcutoffdistrib2d']
             choice = form.cleaned_data['types2ddistrib']
 
             response_data = {}
 
-            response_data['result'] = 'Create post successful!'
-            response_data['mincutoff2d'] = mincutoff2d
-            response_data['maxcutoff2d'] = maxcutoff2d
+            # response_data['result'] = 'Create post successful!'
+            # response_data['mincutoff2d'] = mincutoff2d
+            # response_data['maxcutoff2d'] = maxcutoff2d
             alt = ''
             l2d = ''
-            style = ''
 
             if choice == "strip":
                 l2d = distribStrip(mincutoff2d, maxcutoff2d)
                 alt = '2D map distribuition graphic strip style'
-                style = 'style="height: 40%; width: 40%;"'
 
             elif choice == "box":
                 l2d = distribBox(mincutoff2d, maxcutoff2d)
                 alt = '2D map distribuition graphic box style'
-                style = 'style="height: 40%; width: 40%;"'
             else:
                 l2d = distribViolin(mincutoff2d, maxcutoff2d)
                 alt = '2D map distribuition graphic violin style'
-                style = 'style="height: 40%; width: 40%;"'
+
+            plt.close('all')
                 
-            response_data['distrib2d'] = '<img src="data:image/png;base64, ' + l2d + '" alt="' + alt + '"' + style + '/>'
+            response_data['distrib2d'] = '<img src="data:image/png;base64, ' + l2d + '" id="distrib-img" alt="' + alt + '"/>'
 
             return HttpResponse(
                 json.dumps(response_data),
@@ -310,41 +306,37 @@ def facet2d_post(request):
     if request.method == 'POST':
         form = TwodmapFormFacet(request.POST)
         if form.is_valid():
-            logger.warn(form.cleaned_data)
             mincutoff2d = form.cleaned_data['mincutofffacet2d']
             maxcutoff2d = form.cleaned_data['maxcutofffacet2d']
             choice = form.cleaned_data['types2dfacet']
 
             response_data = {}
 
-            response_data['result'] = 'Create post successful!'
-            response_data['mincutoff2d'] = mincutoff2d
-            response_data['maxcutoff2d'] = maxcutoff2d
+            # response_data['result'] = 'Create post successful!'
+            # response_data['mincutoff2d'] = mincutoff2d
+            # response_data['maxcutoff2d'] = maxcutoff2d
             alt = ''
             l2d = ''
-            style = ''
 
             if choice == "fg":
                 l2d = facetGrids(mincutoff2d, maxcutoff2d)
                 alt = '2D map facet grid graphic'
-                style = 'style="height: 75%; width: 25%;"'
 
             elif choice == "fgrolling":
                 l2d = facetGridsRolling(mincutoff2d, maxcutoff2d)
                 alt = '2D map rolling facet grid graphic'
-                style = 'style="height: 75%; width: 25%;"'
 
             elif choice == "fgdistplot":
                 l2d = facetGridsDistPlot(mincutoff2d, maxcutoff2d)
                 alt = '2D map facet grid dist graphic'
-                style = 'style="height: 40%; width: 75%;"'
             
             else:
                 l2d = facetGridsSeparate(mincutoff2d, maxcutoff2d)
                 alt = '2D map facet grid separate dist graphic'
-                style = 'style="height: 80%; width: 25%;"'
-                
-            response_data['facet2d'] = '<img src="data:image/png;base64, ' + l2d + '" alt="' + alt + '"' + style + '/>'
+
+            plt.close('all')
+
+            response_data['facet2d'] = '<img src="data:image/png;base64, ' + l2d + '" id="facet-img" alt="' + alt + '"/>'
 
             return HttpResponse(
                 json.dumps(response_data),
@@ -561,6 +553,7 @@ def facetGrids(mincutoff, maxcutoff):
     # hue = cores
     # col_wrap = maximo por coluna.
     # sharey = compartilhar o eixo Y.
+
     g=sns.FacetGrid(data=df.melt(),col='variable',col_wrap=3,sharey=False)
     g.map(plt.plot,'value')
 

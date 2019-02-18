@@ -252,7 +252,7 @@
                 </div>
             </div>
         </section>
-        <section style="width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;">
+        <section id="graphicsdiv-id" style="width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <span style="width: 50px;"></span>
                 <li class="nav-item">
@@ -307,14 +307,13 @@
                                     <input type="submit" value="Update Graphic" class="tiny button">
                                 </form>
                                 <div id="line2Dcontent">
-                                    <img src="data:image/png;base64, {{ line2d }}" alt="2D simple line graphic"/>
+                                    <img src="data:image/png;base64, {{ line2d }}" id="line-img" alt="2D simple line graphic"/>
                                 </div>
 
                                 <script>
                                     // Submit post on submit
                                     $('#line2d-form').on('submit', function(event){
                                         event.preventDefault();
-                                        console.log("form submitted!")  // sanity check
                                         if(parseFloat($("#id_mincutoff2d").val()) > parseFloat($("#id_maxcutoff2d").val()) && ($("#id_maxcutoff2d").val() != "" || $("#id_maxcutoff2d").val() != ""))
                                         {
                                             alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
@@ -327,8 +326,6 @@
 
                                     // AJAX for posting
                                     function line2d_post() {
-                                        console.log("create post is working!") // sanity check
-                                        
                                         $.ajax({
                                             url : "line2d_post", // the endpoint
                                             type : "POST", // http method
@@ -336,11 +333,11 @@
 
                                             // handle a successful response
                                             success : function(json) {
-                                                console.log(json); // log the returned json to the console
-                                                
                                                 var data = json
                                                 $("#line2Dcontent").empty(); // Remove data from hist-code DOM
                                                 $("#line2Dcontent").append(data['line2d'])
+
+                                                // eval(document.getElementById("line-code").innerHTML);
                                             },
 
                                             // handle a non-successful response
@@ -352,6 +349,14 @@
                                         });
                                     };
                                 </script>
+                                <!-- <script if="line-code">
+                                    $(document).ready(function() {
+                                        var i = new Image(); 
+                                        i.src = $("#line-img").attr('src');
+                                        $("#line-img").attr('style', 'height: ' + i.height*0.6 + '; width: ' + i.width*0.6 + ';');
+                                        $("graphicsdiv-id").attr('style', 'width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;');
+                                    });
+                                </script> -->
                             </div>
                             <div class="tab-pane fade high text-center" id="heatmap" role="tabpanel" aria-labelledby="heatmap-tab">
                                 <br/>
@@ -361,14 +366,13 @@
                                     <input type="submit" value="Update Graphic" class="tiny button">
                                 </form>
                                 <div id="heat2Dcontent">
-                                    <img src="data:image/png;base64, {{ heatmap }}" alt="2D map heatmap" style="width: 1500px; height: 500px;"/>
+                                    <img src="data:image/png;base64, {{ heatmap }}" id="heat-img" alt="2D map heatmap"/>
                                 </div>
 
                                 <script>
                                     // Submit post on submit
                                     $('#heat2d-form').on('submit', function(event){
                                         event.preventDefault();
-                                        console.log("form submitted!")  // sanity check
                                         if(parseFloat($("#id_mincutoffheat2d").val()) > parseFloat($("#id_maxcutoffheat2d").val()) && ($("#id_maxcutoffheat2d").val() != "" || $("#id_maxcutoffheat2d").val() != ""))
                                         {
                                             alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
@@ -381,8 +385,6 @@
 
                                     // AJAX for posting
                                     function heat2d_post() {
-                                        console.log("create post is working!") // sanity check
-                                        
                                         $.ajax({
                                             url : "heat2d_post", // the endpoint
                                             type : "POST", // http method
@@ -390,11 +392,11 @@
 
                                             // handle a successful response
                                             success : function(json) {
-                                                console.log(json); // log the returned json to the console
-                                                
                                                 var data = json
                                                 $("#heat2Dcontent").empty(); // Remove data from hist-code DOM
                                                 $("#heat2Dcontent").append(data['heat2d'])
+
+                                                // eval(document.getElementById("heat-code").innerHTML);
                                             },
 
                                             // handle a non-successful response
@@ -406,6 +408,14 @@
                                         });
                                     };
                                 </script>
+                                <!-- <script if="heat-code">
+                                    $(document).ready(function() {
+                                        var i = new Image(); 
+                                        i.src = $("#heat-img").attr('src');
+                                        $("#heat-img").attr('style', 'height: ' + i.height*0.6 + '; width: ' + i.width*0.6 + ';');
+                                        $("graphicsdiv-id").attr('style', 'width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;');
+                                    });
+                                </script> -->
                             </div>
                             <div class="tab-pane fade high text-center" id="distrib" role="tabpanel" aria-labelledby="distrib-tab">
                                 <br/>
@@ -421,14 +431,13 @@
                                     <input type="submit" value="Update Graphic" class="tiny button">
                                 </form>
                                 <div id="distrib2Dcontent">
-                                    <img src="data:image/png;base64, {{ distrib }}" alt="2D map distribuition graphic strip style" style="height: 40%; width: 40%;"/>
+                                    <img src="data:image/png;base64, {{ distrib }}" id="distrib-img" alt="2D map distribuition graphic strip style"/>
                                 </div>
 
                                 <script>
                                     // Submit post on submit
                                     $('#distrib2d-form').on('submit', function(event){
                                         event.preventDefault();
-                                        console.log("form submitted!")  // sanity check
                                         if(parseFloat($("#id_mincutoffdistrib2d").val()) > parseFloat($("#id_maxcutoffdistrib2d").val()) && ($("#id_maxcutoffdistrib2d").val() != "" || $("#id_maxcutoffdistrib2d").val() != ""))
                                         {
                                             alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
@@ -441,8 +450,6 @@
 
                                     // AJAX for posting
                                     function distrib2d_post() {
-                                        console.log("create post is working!") // sanity check
-                                        
                                         $.ajax({
                                             url : "distrib2d_post", // the endpoint
                                             type : "POST", // http method
@@ -450,11 +457,11 @@
 
                                             // handle a successful response
                                             success : function(json) {
-                                                console.log(json); // log the returned json to the console
-                                                
                                                 var data = json
                                                 $("#distrib2Dcontent").empty(); // Remove data from hist-code DOM
                                                 $("#distrib2Dcontent").append(data['distrib2d'])
+
+                                                // eval(document.getElementById("distrib-code").innerHTML);
                                             },
 
                                             // handle a non-successful response
@@ -466,6 +473,14 @@
                                         });
                                     };
                                 </script>
+                                <!-- <script if="distrib-code">
+                                    $(document).ready(function() {
+                                        var i = new Image(); 
+                                        i.src = $("#distrib-img").attr('src');
+                                        $("#distrib-img").attr('style', 'height: ' + i.height*0.6 + '; width: ' + i.width*0.6 + ';');
+                                        $("graphicsdiv-id").attr('style', 'width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;');
+                                    });
+                                </script> -->
                             </div>
                             <div class="tab-pane fade high text-center" id="facet" role="tabpanel" aria-labelledby="facet-tab">
                                 <br/>
@@ -481,14 +496,13 @@
                                     <input type="submit" value="Update Graphic" class="tiny button">
                                 </form>
                                 <div id="facet2Dcontent">
-                                    <img src="data:image/png;base64, {{ facet }}" alt="2D map facet grid graphic" style="height: 75%; width: 25%;"/>
+                                    <img src="data:image/png;base64, {{ facet }}" id="facet-img" alt="2D map facet grid graphic"/>
                                 </div>
 
                                 <script>
                                     // Submit post on submit
                                     $('#facet2d-form').on('submit', function(event){
                                         event.preventDefault();
-                                        console.log("form submitted!")  // sanity check
                                         if(parseFloat($("#id_mincutofffacet2d").val()) > parseFloat($("#id_maxcutofffacet2d").val()) && ($("#id_maxcutofffacet2d").val() != "" || $("#id_maxcutofffacet2d").val() != ""))
                                         {
                                             alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
@@ -501,8 +515,6 @@
 
                                     // AJAX for posting
                                     function facet2d_post() {
-                                        console.log("create post is working!") // sanity check
-                                        
                                         $.ajax({
                                             url : "facet2d_post", // the endpoint
                                             type : "POST", // http method
@@ -510,11 +522,16 @@
 
                                             // handle a successful response
                                             success : function(json) {
-                                                console.log(json); // log the returned json to the console
-                                                
                                                 var data = json
+
+                                                // var i = new Image(); 
+                                                // i.src = data['facet2d'].split('src')[1].split('"')[1]
+                                                // $("#facet-img").attr('style', 'height: ' + i.height*0.6 + '; width: ' + i.width*0.6 + ';');
+
                                                 $("#facet2Dcontent").empty(); // Remove data from hist-code DOM
                                                 $("#facet2Dcontent").append(data['facet2d'])
+
+                                                eval(document.getElementById("facet-code").innerHTML);
                                             },
 
                                             // handle a non-successful response
@@ -525,6 +542,14 @@
                                             }
                                         });
                                     };
+                                </script>
+                                <script id="facet-code">
+                                    $(document).ready(function() {
+                                        var i = new Image(); 
+                                        i.src = $("#facet-img").attr('src');
+                                        $("#facet-img").attr('style', 'height: ' + i.height*0.6 + '; width: ' + i.width*0.6 + ';');
+                                        $("graphicsdiv-id").attr('style', 'width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;');
+                                    });
                                 </script>
                             </div>
                         </div>
@@ -630,7 +655,8 @@
                                 }
                             }
                         });
-
+                    </script>
+                    <script>
                         // Submit post on submit
                         $('#hist-form').on('submit', function(event){
                             event.preventDefault();
