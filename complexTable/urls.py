@@ -20,20 +20,12 @@ downloadpatterns = [
 # Patterns to work with ajax
 ajaxpatterns =[
     path('hist_post', views.hist_post, name='hist_post'),
-]
-
-# Pattern to be used with 2dmap (generate figures on the fly)
-twodmappatterns = [
-    path('simple.png', views.simplePlot, name='simple2Dmap'),
-    path('runningAvg.png', views.runningAvg, name='runningAvg2Dmap'),
-    path('heatMap.png', views.heatMap, name='heatMap2Dmap'),
-    path('distribStrip.png', views.distribStrip, name='distribStrip2Dmap'),
-    path('distribBox.png', views.distribBox, name='distribBox2Dmap'),
-    path('distribViolin.png', views.distribViolin, name='distribViolin2Dmap'),
-    path('facetGrids.png', views.facetGrids, name='facetGrids2Dmap'),
+    path('line2d_post', views.line2d_post, name='line2d_post'),
+    path('heat2d_post', views.heat2d_post, name='heat2d_post'),
+    path('distrib2d_post', views.distrib2d_post, name='distrib2d_post'),
+    path('facet2d_post', views.facet2d_post, name='facet2d_post'),
 ]
 
 # Concatenate all lists
 urlpatterns += downloadpatterns
 urlpatterns += ajaxpatterns
-urlpatterns += twodmappatterns

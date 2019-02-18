@@ -10,10 +10,14 @@ from django.views.generic.edit import FormView
 # Models import
 from complexTable.models import Complex
 
-from complexTable.models import PostHistogram
-from complexTable.forms import HistForm, CheckForm
+from complexTable.forms import *
+
+# Special python imports
+import matplotlib
+matplotlib.use('Agg')
 
 # Python imports
+from io import BytesIO
 from ast import literal_eval
 from wsgiref.util import FileWrapper
 from matplotlib import pyplot as plt
@@ -25,6 +29,7 @@ import os
 import re
 import csv
 import json
+import base64
 import logging
 import tarfile
 import pandas as pd
@@ -173,6 +178,190 @@ def hist_post(request):
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+
+def line2d_post(request):
+    if request.method == 'POST':
+        form = TwodmapFormLine(request.POST)
+        if form.is_valid():
+            logger.warn(form.cleaned_data)
+            mincutoff2d = form.cleaned_data['mincutoff2d']
+            maxcutoff2d = form.cleaned_data['maxcutoff2d']
+            choice = form.cleaned_data['types2d']
+
+            response_data = {}
+
+            response_data['result'] = 'Create post successful!'
+            response_data['mincutoff2d'] = mincutoff2d
+            response_data['maxcutoff2d'] = maxcutoff2d
+            alt = ''
+            l2d = ''
+            style = ''
+
+            if choice == "simple":
+                l2d = simplePlot(mincutoff2d, maxcutoff2d)
+                alt = '2D simple line graphic'
+
+            else:
+                l2d = runningAvg(mincutoff2d, maxcutoff2d)
+                alt = '2D running average line graphic'
+                style='style="height: 40%; width: 40%;"'
+                
+            response_data['line2d'] = '<img src="data:image/png;base64, ' + l2d + '" alt="' + alt + '" ' + style + '/>'
+
+            return HttpResponse(
+                json.dumps(response_data),
+                content_type="application/json"
+            )
+        else:
+            return HttpResponse(
+            json.dumps({"Wrong": "Form not valid"}),
+            content_type="application/json"
+        )
+            
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )
+
+def heat2d_post(request):
+    if request.method == 'POST':
+        form = TwodmapFormHeat(request.POST)
+        if form.is_valid():
+            logger.warn(form.cleaned_data)
+            mincutoffheat2d = form.cleaned_data['mincutoffheat2d']
+            maxcutoffheat2d = form.cleaned_data['maxcutoffheat2d']
+
+            response_data = {}
+
+            response_data['result'] = 'Create post successful!'
+            response_data['mincutoff2d'] = mincutoffheat2d
+            response_data['maxcutoff2d'] = maxcutoffheat2d
+                
+            response_data['heat2d'] = '<img src="data:image/png;base64, ' + heatMap(mincutoffheat2d, maxcutoffheat2d) + '" alt="2D map heatmap" style="width: 1500px; height: 500px;"/>'
+
+            return HttpResponse(
+                json.dumps(response_data),
+                content_type="application/json"
+            )
+        else:
+            return HttpResponse(
+            json.dumps({"Wrong": "Form not valid"}),
+            content_type="application/json"
+        )
+            
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )
+
+def distrib2d_post(request):
+    if request.method == 'POST':
+        form = TwodmapFormDistrib(request.POST)
+        if form.is_valid():
+            logger.warn(form.cleaned_data)
+            mincutoff2d = form.cleaned_data['mincutoffdistrib2d']
+            maxcutoff2d = form.cleaned_data['maxcutoffdistrib2d']
+            choice = form.cleaned_data['types2ddistrib']
+
+            response_data = {}
+
+            response_data['result'] = 'Create post successful!'
+            response_data['mincutoff2d'] = mincutoff2d
+            response_data['maxcutoff2d'] = maxcutoff2d
+            alt = ''
+            l2d = ''
+            style = ''
+
+            if choice == "strip":
+                l2d = distribStrip(mincutoff2d, maxcutoff2d)
+                alt = '2D map distribuition graphic strip style'
+                style = 'style="height: 40%; width: 40%;"'
+
+            elif choice == "box":
+                l2d = distribBox(mincutoff2d, maxcutoff2d)
+                alt = '2D map distribuition graphic box style'
+                style = 'style="height: 40%; width: 40%;"'
+            else:
+                l2d = distribViolin(mincutoff2d, maxcutoff2d)
+                alt = '2D map distribuition graphic violin style'
+                style = 'style="height: 40%; width: 40%;"'
+                
+            response_data['distrib2d'] = '<img src="data:image/png;base64, ' + l2d + '" alt="' + alt + '"' + style + '/>'
+
+            return HttpResponse(
+                json.dumps(response_data),
+                content_type="application/json"
+            )
+        else:
+            return HttpResponse(
+            json.dumps({"Wrong": "Form not valid"}),
+            content_type="application/json"
+        )
+            
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )
+
+def facet2d_post(request):
+    if request.method == 'POST':
+        form = TwodmapFormFacet(request.POST)
+        if form.is_valid():
+            logger.warn(form.cleaned_data)
+            mincutoff2d = form.cleaned_data['mincutofffacet2d']
+            maxcutoff2d = form.cleaned_data['maxcutofffacet2d']
+            choice = form.cleaned_data['types2dfacet']
+
+            response_data = {}
+
+            response_data['result'] = 'Create post successful!'
+            response_data['mincutoff2d'] = mincutoff2d
+            response_data['maxcutoff2d'] = maxcutoff2d
+            alt = ''
+            l2d = ''
+            style = ''
+
+            if choice == "fg":
+                l2d = facetGrids(mincutoff2d, maxcutoff2d)
+                alt = '2D map facet grid graphic'
+                style = 'style="height: 75%; width: 25%;"'
+
+            elif choice == "fgrolling":
+                l2d = facetGridsRolling(mincutoff2d, maxcutoff2d)
+                alt = '2D map rolling facet grid graphic'
+                style = 'style="height: 75%; width: 25%;"'
+
+            elif choice == "fgdistplot":
+                l2d = facetGridsDistPlot(mincutoff2d, maxcutoff2d)
+                alt = '2D map facet grid dist graphic'
+                style = 'style="height: 40%; width: 75%;"'
+            
+            else:
+                l2d = facetGridsSeparate(mincutoff2d, maxcutoff2d)
+                alt = '2D map facet grid separate dist graphic'
+                style = 'style="height: 80%; width: 25%;"'
+                
+            response_data['facet2d'] = '<img src="data:image/png;base64, ' + l2d + '" alt="' + alt + '"' + style + '/>'
+
+            return HttpResponse(
+                json.dumps(response_data),
+                content_type="application/json"
+            )
+        else:
+            return HttpResponse(
+            json.dumps({"Wrong": "Form not valid"}),
+            content_type="application/json"
+        )
+            
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )
+
 # endregion
 
 # region Parse files
@@ -246,15 +435,15 @@ def parseCSV():
         localData = {}
 
         for key, value in line.items():
-                if key == "ID":
-                    localData["id"] = tryToRound(value, 2)
-                elif key == "":
-                    localData["ID"] = tryToRound(value, 2)
-                else:
-                    try:
-                        localData[key.lower()] = tryToRound(value, 2)
-                    except:
-                        localData[key] = tryToRound(value, 2)
+            if key == "ID":
+                localData["id"] = tryToRound(value, 2)
+            elif key == "":
+                localData["ID"] = tryToRound(value, 2)
+            else:
+                try:
+                    localData[key.lower()] = tryToRound(value, 2)
+                except:
+                    localData[key] = tryToRound(value, 2)
                         
 
         # dataInfo.append(localData)
@@ -265,108 +454,108 @@ def parseCSV():
 
     return (dataInfo, keys)
 
-def parse2Dmap():
+def parse2Dmap(mincutoff2d, maxcutoff2d):
     path = os.path.join(settings.FILES_DIR, 'dats/2D_map.dat')
+    df = pd.read_csv(path, delim_whitespace=True, header=None).drop([0], axis=1)
 
-    df = pd.read_csv(path, delim_whitespace=True, header=None)
-
-    # Configuracao
-    minimo=4.0
-    maximo=50.0
-
-    # Filtro para os dados.
-    df = df[(df > minimo) & (df < maximo)].dropna(axis='columns')
+    if mincutoff2d != None and maxcutoff2d != None:
+        df = df[(df > mincutoff2d) & (df < maxcutoff2d)].dropna(axis='columns')
+    
+    elif mincutoff2d == None and maxcutoff2d != None:
+        df = df[(df < maxcutoff2d)].dropna(axis='columns')
+    
+    elif mincutoff2d != None and maxcutoff2d == None:
+        df = df[(df > mincutoff2d)].dropna(axis='columns')
 
     return df
-    
 
 # endregion
 
 # region 2dGraphic generating functions
 
-def simplePlot(request):
-    df = parse2Dmap()
-    fig = Figure()
-
-    # plot simples.
+def simplePlot(mincutoff2d, maxcutoff2d):
+    df = parse2Dmap(mincutoff2d, maxcutoff2d)
     df.plot(figsize=(10,5))
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
-    return response
+    
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png')
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
-def runningAvg(request):
-    df = parse2Dmap()
-    fig = Figure()
+    fig_buffer.close()
+    return image_base64
+
+def runningAvg(mincutoff, maxcutoff):
+    df = parse2Dmap(mincutoff, maxcutoff)
 
     # Agora apenas a "running average" a cada 100 passos.
     df.rolling(window=100).mean().plot(figsize=(10,5))
-    
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
-    
-    return response
 
-def heatMap(request):
-    df = parse2Dmap()
-    fig = Figure()
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png', dpi=150)
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+
+    fig_buffer.close()
+    return image_base64
+
+def heatMap(mincutoff, maxcutoff):
+    df = parse2Dmap(mincutoff, maxcutoff)
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
     plt.figure(figsize = (15,5))  # Truque para arrumar o tamanho da figura.
     sns.heatmap(df.transpose(), cmap="viridis")
 
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png', dpi=150)
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
-    return response
+    fig_buffer.close()
+    return image_base64
+    # return response
 
-def distribStrip(request):
-    df = parse2Dmap()
-    fig = Figure()
+def distribStrip(mincutoff, maxcutoff):
+    df = parse2Dmap(mincutoff, maxcutoff)
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
     plt.figure(figsize = (15,5))  # Truque para arrumar o tamanho da figura.
     sns.catplot(data=df.melt(), x='variable', y='value', kind='strip', aspect=2)
+    
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png', dpi=150)
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
+    fig_buffer.close()
+    return image_base64
 
-    return response
-
-def distribBox(request):
-    df = parse2Dmap()
-    fig = Figure()
+def distribBox(mincutoff, maxcutoff):
+    df = parse2Dmap(mincutoff, maxcutoff)
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
     plt.figure(figsize = (15,5))  # Truque para arrumar o tamanho da figura.
     sns.catplot(data=df.melt(), x='variable', y='value', kind='box', aspect=2)
 
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png', dpi=150)
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
-    return response
+    fig_buffer.close()
+    return image_base64
 
-def distribViolin(request):
-    df = parse2Dmap()
-    fig = Figure()
+def distribViolin(mincutoff, maxcutoff):
+    df = parse2Dmap(mincutoff, maxcutoff)
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
     plt.figure(figsize = (15,5))  # Truque para arrumar o tamanho da figura.
     sns.catplot(data=df.melt(), x='variable', y='value', kind='violin', aspect=2)
 
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png', dpi=150)
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
-    return response
+    fig_buffer.close()
+    return image_base64
 
-def facetGrids(request):
-    df = parse2Dmap()
-    fig = Figure()
+def facetGrids(mincutoff, maxcutoff):
+    df = parse2Dmap(mincutoff, maxcutoff)
 
     # col = coluna
     # hue = cores
@@ -375,15 +564,15 @@ def facetGrids(request):
     g=sns.FacetGrid(data=df.melt(),col='variable',col_wrap=3,sharey=False)
     g.map(plt.plot,'value')
 
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png', dpi=150)
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
-    return response
+    fig_buffer.close()
+    return image_base64
 
-def facetGridsRolling(request):
-    df = parse2Dmap()
-    fig = Figure()
+def facetGridsRolling(mincutoff, maxcutoff):
+    df = parse2Dmap(mincutoff, maxcutoff)
 
     # col = coluna
     # hue = cores
@@ -392,15 +581,15 @@ def facetGridsRolling(request):
     g=sns.FacetGrid(data=df.rolling(window=100).mean().melt(),col='variable',col_wrap=3,sharey=False)
     g.map(plt.plot,'value')
 
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png', dpi=150)
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
-    return response
+    fig_buffer.close()
+    return image_base64
 
-def facetGridsDistPlot(request):
-    df = parse2Dmap()
-    fig = Figure()
+def facetGridsDistPlot(mincutoff, maxcutoff):
+    df = parse2Dmap(mincutoff, maxcutoff)
 
     # col = coluna
     # hue = cores
@@ -409,15 +598,15 @@ def facetGridsDistPlot(request):
     g=sns.FacetGrid(data=df.melt(),hue='variable',aspect=4)
     g.map(sns.distplot,'value',hist=False)
 
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png', dpi=150)
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
-    return response
+    fig_buffer.close()
+    return image_base64
 
-def facetGridsSeparate(request):
-    df = parse2Dmap()
-    fig = Figure()
+def facetGridsSeparate(mincutoff, maxcutoff):
+    df = parse2Dmap(mincutoff, maxcutoff)
 
     # col = coluna
     # hue = cores
@@ -426,11 +615,12 @@ def facetGridsSeparate(request):
     g=sns.FacetGrid(data=df.melt(),col='variable',col_wrap=3,hue='variable',aspect=1)
     g.map(sns.distplot,'value',hist=False)
 
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
+    fig_buffer = BytesIO()
+    plt.savefig(fig_buffer, format='png', dpi=150)
+    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
-    return response
+    fig_buffer.close()
+    return image_base64
 
 # endregion
 
@@ -622,15 +812,30 @@ class DetailedView(generic.ListView):
 
         histogram = parseHistogram()
         timeSeries = parseTimeseries()
+        
+        minlimit = 0
+        maxlimit = None
+
+        line2d = simplePlot(minlimit, maxlimit)
+        heatmap = heatMap(minlimit, maxlimit)
+        distrib = distribStrip(minlimit, maxlimit)
+        facet = facetGrids(minlimit, maxlimit)
 
         variables = {
             "histForm": HistForm,
+            "2DmapForm": TwodmapFormLine,
+            "2DheatForm": TwodmapFormHeat,
+            "2DdistribForm": TwodmapFormDistrib,
+            "2DfacetForm": TwodmapFormFacet,
             'info': data[0][lineId],
             'keys': data[1],
             'bigID': lineId,
             'histogram': histogram,
-            'timeSeries': timeSeries
-            #'2Dmap'
+            'timeSeries': timeSeries,
+            'line2d': line2d,
+            'heatmap': heatmap,
+            'distrib': distrib,
+            'facet': facet
             }
 
         return render(request, 'complexTable/detailedInfo.html', variables)

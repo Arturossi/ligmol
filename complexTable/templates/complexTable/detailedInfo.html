@@ -252,7 +252,7 @@
                 </div>
             </div>
         </section>
-        <section style="width: 100%; height: 880px; overflow-y: hidden; overflow-x: hidden;">
+        <section style="width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <span style="width: 50px;"></span>
                 <li class="nav-item">
@@ -274,7 +274,261 @@
                     
                 </style>
                 <div class="tab-pane fade high show active text-center" id="twodmap" role="tabpanel" aria-labelledby="twodmap-tab">
-                    
+                    <div style="margin: 10 15 0 15">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <span style="width: 50px;"></span>
+                            <li class="nav-item">
+                                <a class="nav-link active" id="lineplot-tab" data-toggle="tab" href="#lineplot" role="tab" aria-controls="lineplot" aria-selected="true">2D Line plots</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="heatmap-tab" data-toggle="tab" href="#heatmap" role="tab" aria-controls="heatmap" aria-selected="false">2D Heatmap</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="distrib-tab" data-toggle="tab" href="#distrib" role="tab" aria-controls="distrib" aria-selected="false">2D Distribution</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="facet-tab" data-toggle="tab" href="#facet" role="tab" aria-controls="facet" aria-selected="false">2D FacetGrids</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <style id="canvas-style2">
+                            </style>
+                            <div class="tab-pane fade high show active text-center" id="lineplot" role="tabpanel" aria-labelledby="lineplot-tab">
+                                <br/>
+                                <form method="POST" action="line2d-form" id="line2d-form">
+                                    {% csrf_token %}
+                                    {% for choice in 2DmapForm.types2d %}
+                                    {{ choice.choice_label }}
+                                    <span class="radio" style="margin: 10 10 10 10">{{ choice.tag }}</span>   
+                                    {% endfor %}
+                                    <br/>
+                                    {{ 2DmapForm.mincutoff2d.label }} {{ 2DmapForm.mincutoff2d }}
+                                    {{ 2DmapForm.maxcutoff2d.label }} {{ 2DmapForm.maxcutoff2d }}
+                                    <input type="submit" value="Update Graphic" class="tiny button">
+                                </form>
+                                <div id="line2Dcontent">
+                                    <img src="data:image/png;base64, {{ line2d }}" alt="2D simple line graphic"/>
+                                </div>
+
+                                <script>
+                                    // Submit post on submit
+                                    $('#line2d-form').on('submit', function(event){
+                                        event.preventDefault();
+                                        console.log("form submitted!")  // sanity check
+                                        if(parseFloat($("#id_mincutoff2d").val()) > parseFloat($("#id_maxcutoff2d").val()) && ($("#id_maxcutoff2d").val() != "" || $("#id_maxcutoff2d").val() != ""))
+                                        {
+                                            alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
+                                        }
+                                        else
+                                        {
+                                            line2d_post();
+                                        }
+                                    });
+
+                                    // AJAX for posting
+                                    function line2d_post() {
+                                        console.log("create post is working!") // sanity check
+                                        
+                                        $.ajax({
+                                            url : "line2d_post", // the endpoint
+                                            type : "POST", // http method
+                                            data : { mincutoff2d: $('#id_mincutoff2d').val(), maxcutoff2d : $('#id_maxcutoff2d').val(), types2d : $('input[name=types2d]:checked').val() }, // data sent with the post request
+
+                                            // handle a successful response
+                                            success : function(json) {
+                                                console.log(json); // log the returned json to the console
+                                                
+                                                var data = json
+                                                $("#line2Dcontent").empty(); // Remove data from hist-code DOM
+                                                $("#line2Dcontent").append(data['line2d'])
+                                            },
+
+                                            // handle a non-successful response
+                                            error : function(xhr,errmsg,err) {
+                                                $('#line2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                                                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                                            }
+                                        });
+                                    };
+                                </script>
+                            </div>
+                            <div class="tab-pane fade high text-center" id="heatmap" role="tabpanel" aria-labelledby="heatmap-tab">
+                                <br/>
+                                <form method="POST" action="heat2d-form" id="heat2d-form">
+                                    {% csrf_token %}
+                                    {{ 2DheatForm }}
+                                    <input type="submit" value="Update Graphic" class="tiny button">
+                                </form>
+                                <div id="heat2Dcontent">
+                                    <img src="data:image/png;base64, {{ heatmap }}" alt="2D map heatmap" style="width: 1500px; height: 500px;"/>
+                                </div>
+
+                                <script>
+                                    // Submit post on submit
+                                    $('#heat2d-form').on('submit', function(event){
+                                        event.preventDefault();
+                                        console.log("form submitted!")  // sanity check
+                                        if(parseFloat($("#id_mincutoffheat2d").val()) > parseFloat($("#id_maxcutoffheat2d").val()) && ($("#id_maxcutoffheat2d").val() != "" || $("#id_maxcutoffheat2d").val() != ""))
+                                        {
+                                            alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
+                                        }
+                                        else
+                                        {
+                                            heat2d_post();
+                                        }
+                                    });
+
+                                    // AJAX for posting
+                                    function heat2d_post() {
+                                        console.log("create post is working!") // sanity check
+                                        
+                                        $.ajax({
+                                            url : "heat2d_post", // the endpoint
+                                            type : "POST", // http method
+                                            data : { mincutoffheat2d: $('#id_mincutoffheat2d').val(), maxcutoffheat2d : $('#id_maxcutoffheat2d').val() }, // data sent with the post request
+
+                                            // handle a successful response
+                                            success : function(json) {
+                                                console.log(json); // log the returned json to the console
+                                                
+                                                var data = json
+                                                $("#heat2Dcontent").empty(); // Remove data from hist-code DOM
+                                                $("#heat2Dcontent").append(data['heat2d'])
+                                            },
+
+                                            // handle a non-successful response
+                                            error : function(xhr,errmsg,err) {
+                                                $('#line2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                                                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                                            }
+                                        });
+                                    };
+                                </script>
+                            </div>
+                            <div class="tab-pane fade high text-center" id="distrib" role="tabpanel" aria-labelledby="distrib-tab">
+                                <br/>
+                                <form method="POST" action="distrib2d-form" id="distrib2d-form">
+                                    {% csrf_token %}
+                                    {% for choice in 2DdistribForm.types2ddistrib %}
+                                    {{ choice.choice_label }}
+                                    <span class="radio" style="margin: 10 10 10 10">{{ choice.tag }}</span>   
+                                    {% endfor %}
+                                    <br/>
+                                    {{ 2DdistribForm.mincutoffdistrib2d.label }} {{ 2DdistribForm.mincutoffdistrib2d }}
+                                    {{ 2DdistribForm.maxcutoffdistrib2d.label }} {{ 2DdistribForm.maxcutoffdistrib2d }}
+                                    <input type="submit" value="Update Graphic" class="tiny button">
+                                </form>
+                                <div id="distrib2Dcontent">
+                                    <img src="data:image/png;base64, {{ distrib }}" alt="2D map distribuition graphic strip style" style="height: 40%; width: 40%;"/>
+                                </div>
+
+                                <script>
+                                    // Submit post on submit
+                                    $('#distrib2d-form').on('submit', function(event){
+                                        event.preventDefault();
+                                        console.log("form submitted!")  // sanity check
+                                        if(parseFloat($("#id_mincutoffdistrib2d").val()) > parseFloat($("#id_maxcutoffdistrib2d").val()) && ($("#id_maxcutoffdistrib2d").val() != "" || $("#id_maxcutoffdistrib2d").val() != ""))
+                                        {
+                                            alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
+                                        }
+                                        else
+                                        {
+                                            distrib2d_post();
+                                        }
+                                    });
+
+                                    // AJAX for posting
+                                    function distrib2d_post() {
+                                        console.log("create post is working!") // sanity check
+                                        
+                                        $.ajax({
+                                            url : "distrib2d_post", // the endpoint
+                                            type : "POST", // http method
+                                            data : { mincutoffdistrib2d : $('#id_mincutoffdistrib2d').val(), maxcutoffdistrib2d : $('#id_maxcutoffdistrib2d').val(), types2ddistrib : $('input[name=types2ddistrib]:checked').val() }, // data sent with the post request
+
+                                            // handle a successful response
+                                            success : function(json) {
+                                                console.log(json); // log the returned json to the console
+                                                
+                                                var data = json
+                                                $("#distrib2Dcontent").empty(); // Remove data from hist-code DOM
+                                                $("#distrib2Dcontent").append(data['distrib2d'])
+                                            },
+
+                                            // handle a non-successful response
+                                            error : function(xhr,errmsg,err) {
+                                                $('#distrib2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                                                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                                            }
+                                        });
+                                    };
+                                </script>
+                            </div>
+                            <div class="tab-pane fade high text-center" id="facet" role="tabpanel" aria-labelledby="facet-tab">
+                                <br/>
+                                <form method="POST" action="facet2d-form" id="facet2d-form">
+                                    {% csrf_token %}
+                                    {% for choice in 2DfacetForm.types2dfacet %}
+                                    {{ choice.choice_label }}
+                                    <span class="radio" style="margin: 10 10 10 10">{{ choice.tag }}</span>   
+                                    {% endfor %}
+                                    <br/>
+                                    {{ 2DfacetForm.mincutofffacet2d.label }} {{ 2DfacetForm.mincutofffacet2d }}
+                                    {{ 2DfacetForm.maxcutofffacet2d.label }} {{ 2DfacetForm.maxcutofffacet2d }}
+                                    <input type="submit" value="Update Graphic" class="tiny button">
+                                </form>
+                                <div id="facet2Dcontent">
+                                    <img src="data:image/png;base64, {{ facet }}" alt="2D map facet grid graphic" style="height: 75%; width: 25%;"/>
+                                </div>
+
+                                <script>
+                                    // Submit post on submit
+                                    $('#facet2d-form').on('submit', function(event){
+                                        event.preventDefault();
+                                        console.log("form submitted!")  // sanity check
+                                        if(parseFloat($("#id_mincutofffacet2d").val()) > parseFloat($("#id_maxcutofffacet2d").val()) && ($("#id_maxcutofffacet2d").val() != "" || $("#id_maxcutofffacet2d").val() != ""))
+                                        {
+                                            alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
+                                        }
+                                        else
+                                        {
+                                            facet2d_post();
+                                        }
+                                    });
+
+                                    // AJAX for posting
+                                    function facet2d_post() {
+                                        console.log("create post is working!") // sanity check
+                                        
+                                        $.ajax({
+                                            url : "facet2d_post", // the endpoint
+                                            type : "POST", // http method
+                                            data : { mincutofffacet2d : $('#id_mincutofffacet2d').val(), maxcutofffacet2d : $('#id_maxcutofffacet2d').val(), types2dfacet : $('input[name=types2dfacet]:checked').val() }, // data sent with the post request
+
+                                            // handle a successful response
+                                            success : function(json) {
+                                                console.log(json); // log the returned json to the console
+                                                
+                                                var data = json
+                                                $("#facet2Dcontent").empty(); // Remove data from hist-code DOM
+                                                $("#facet2Dcontent").append(data['facet2d'])
+                                            },
+
+                                            // handle a non-successful response
+                                            error : function(xhr,errmsg,err) {
+                                                $('#facet2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                                                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                                            }
+                                        });
+                                    };
+                                </script>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="tab-pane fade high" id="timeSeries" role="tabpanel" aria-labelledby="timeSeries-tab">
                     <div class="border-bottom">
@@ -321,7 +575,6 @@
                             }
                         });
                     </script>
-                    
                 </div>
                 <div class="tab-pane fade high" id="histogram" role="tabpanel" aria-labelledby="histogram-tab" style="height: 900px;">
                     <div class="border-bottom">
@@ -377,9 +630,7 @@
                                 }
                             }
                         });
-                    </script>
-                    
-                    <script>
+
                         // Submit post on submit
                         $('#hist-form').on('submit', function(event){
                             event.preventDefault();
@@ -417,14 +668,13 @@
                                     $("#canvas-style").prepend(data['style']);
 
                                     eval(document.getElementById("hist-code").innerHTML);
-                                    //eval(document.getElementById("canvas-style").innerHTML);
 
                                     console.log("success"); // another sanity check
                                 },
 
                                 // handle a non-successful response
                                 error : function(xhr,errmsg,err) {
-                                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                    $('#show-histogram').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
                                         " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                                 }
