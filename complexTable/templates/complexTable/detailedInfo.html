@@ -85,7 +85,7 @@
         <br/>
         <section class="content-section-small">
             <div class="row">
-                <div class="col-md-4 col-sm-12 panel panel-default text-center">
+                <div class="col-md-3 col-sm-12 panel panel-default text-center">
                     <input value="Return" type="button" onclick="location.href='{% url 'complexTable:complexTable' %}'" class="btn"></input>
                     <div class="flip-card text-center" style="height: 580px; width: 400px; margin-left: 200px; margin-top: 20px;">
                         <div class="flip-card-inner border rounded" style="height: 580px; width: 400px;">
@@ -171,7 +171,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-12">
+                <div class="col-md-3 col-sm-12">
                     <div class="panel panel-default text-center" id="ligandNgl">
                         <script src="https://unpkg.com/ngl"></script>
                         <script>
@@ -247,8 +247,46 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-12">{% for key, val in info.items %}{% if key|lower == "complex" %}<h1 id="complex">{{ val }}</h1>{% elif key|lower != "id" %}<p class="text-left">{{ key }}: {{ val }}</p>{% endif %}
-                    {% endfor %}<input value="Download" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input>
+                <div class="col-md-2 col-sm-12">{% for key, val in info.items %}{% if key|lower == "complex" %}<h1 id="complex">{{ val }}</h1>{% elif key|lower != "id" %}<p class="text-left">{{ key }}: {{ val }}</p>{% endif %}
+                    {% endfor %}
+                </div>
+                <div class="col-md-3 col-sm-12">
+                    <div class="border" style="height:auto; width: 75%;">
+                        <div class="container">
+                            {% for key, value in fileTree.items %}
+                            <div class="row border border-top-0 border-left-0 border-right-0 border-info">
+                                <div class="col-1">
+                                    <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="{{ key }}">
+                                </div>
+                                <div class="col-1">{{ key }}</div>
+                            </div>
+                                {% for key2,value2 in value.items %}
+                                    <div class="row border border-top-0 border-left-0 border-right-0 border-info">
+                                        <div class="col-1">
+                                            <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="{{ key2 }}">
+                                        </div>
+                                        <div class="col-1"></div>
+                                        <div class="col-1">{{ key2 }}</div>
+                                    </div>
+                                    {% for key3, value3 in value2.items %}
+                                    <div class="row border border-top-0 border-left-0 border-right-0 border-info">
+                                        <div class="col-1">
+                                            <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="{{ key3 }}">
+                                        </div>
+                                        <div class="col-1"></div>
+                                        <div class="col-1"></div>
+                                        <div class="col-5">{{ key3 }}</div>
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                            <br/>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-12">
+                        <input value="Download" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input>
+                    </div>
                 </div>
             </div>
         </section>
@@ -574,7 +612,7 @@
                             data: {
                                 x: '{{ timeSeries|getItem:"x" }}',
                                 columns: [
-                                    {% for data in timeSeries|getItem:'datas' %}[{% for info in data %}{% if forloop.first %}'{{ info }}'{% else %}{{ info }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %}, 
+                                    {% for data in timeSeries|getItem:'datas' %}[{% for dt in data %}{% if forloop.first %}'{{ dt }}'{% else %}{{ dt }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %}, 
                                     {% endif %}{% endfor %}
                                 ]
                             },
@@ -626,7 +664,7 @@
                             bindto: '#show-histogram',
                             data: {
                                 columns: [
-                                    {% for data in histogram|getItem:'datas' %}[{% for info in data %}{% if forloop.first %}'{{ info }}'{% else %}{{ info }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %}, 
+                                    {% for data in histogram|getItem:'datas' %}[{% for dt in data %}{% if forloop.first %}'{{ dt }}'{% else %}{{ dt }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %}, 
                                     {% endif %}{% endfor %}
                                 ],
                                 type: 'bar'
