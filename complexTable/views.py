@@ -697,6 +697,9 @@ def simplePlot(mincutoff2d, maxcutoff2d):
 
     # Plot it
     df.plot(figsize=(10,5))
+
+    # Set legend position
+    plt.legend(loc='upper right')
     
     # Create a buffer
     fig_buffer = BytesIO()
@@ -724,6 +727,9 @@ def runningAvg(mincutoff, maxcutoff):
     # Perform a "running average" for each 100 steps.
     df.rolling(window=100).mean().plot(figsize=(10,5))
 
+    # Set legend position
+    plt.legend(loc='upper right')
+
     # Create a buffer
     fig_buffer = BytesIO()
 
@@ -749,7 +755,7 @@ def heatMap(mincutoff, maxcutoff):
 
     # Set fig size
     plt.figure(figsize = (15,5))
-    
+
     # Plot as a heatmap. ( não sei arrumar os xticks )
     sns.heatmap(df.transpose(), cmap="viridis")
 
@@ -810,7 +816,7 @@ def distribBox(mincutoff, maxcutoff):
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
     sns.catplot(data=df.melt(), x='variable', y='value', kind='box', aspect=2)
-
+    
     # Create a buffer
     fig_buffer = BytesIO()
     
@@ -1065,8 +1071,8 @@ def getListOfFiles(dirName):
     # Sort paths
     allFiles.sort()
 
-    # Remove given path and first char (will always be a "/")
-    allFiles = [fil.replace(dirName, '')[1:] for fil in allFiles]
+    # Remove given path
+    allFiles = [fil.replace(dirName, '') for fil in allFiles]
 
     # Return parsed data
     return build_nested(allFiles)
@@ -1150,6 +1156,115 @@ def tryToRound(val, elems):
 # endregion
 
 # region Download 
+
+def downloadPOST(request):
+    """
+    Function to download a file with POST info
+    """
+
+    # Load the .csv data
+    data = parseCSV()
+
+    # Read get data
+    lineId = request.GET.get('id')
+
+    # If no get is passed
+    if not lineId:
+        # Stop!
+        raise Http404("Invalid or null ID")
+
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+
+        # create a form instance and populate it with data from the request:
+        form = FilesSubfiles(request.POST)
+        
+        # check whether it's valid:
+        if form.is_valid():
+            # Read which choices were made
+            ids = literal_eval(form.cleaned_data['choices'])
+
+            # Create the response object being an application/x-gzip
+            response = HttpResponse(content_type='application/x-gzip')
+
+            # Add the file on it
+            response['Content-Disposition'] = 'attachment; filename=datas.tar.gz'
+
+            # Create a tar file passing the response as path
+            tar = tarfile.open(fileobj=response, mode="w:gz")
+
+            # Create a path set
+            paths = set()
+
+            # For each id in list
+            for id in ids:
+                dataid = id.split('-')
+                logger.warn(id)
+                
+                # If is a file (other checkboxes are purely functional, no neede data over there)
+                if dataid[0] == 'lv3':
+                    innerdataid = '-'.join(dataid[1:]).replace('+._.+', '/')
+
+                    # Create the path
+                    path = os.path.join(settings.FILES_DIR, ''.join(['summary/', data[0][lineId]['complex'].upper(), '/', innerdataid]))
+
+                    # If path has not been added to tar yet
+                    if path not in paths:
+                        # Add it
+                        tar.add(path, arcname=''.join([data[0][lineId]['complex'].upper(), '/', innerdataid]))
+                    
+                    # Add the path to paths set
+                    paths.add(path)
+            
+            logger.warn(paths)
+            # Close the tar
+            tar.close()
+
+            # Return the response
+            return response
+        
+    # Parse histogram
+    histogram = parseHistogram()
+
+    # Parse time series
+    timeSeries = parseTimeseries()
+    
+    # Parametrize min and max values
+    minlimit = 0
+    maxlimit = None
+
+    # Get images for line2d, heatmap, distrib and facet graphics
+    line2d = simplePlot(minlimit, maxlimit)
+    heatmap = heatMap(minlimit, maxlimit)
+    distrib = distribStrip(minlimit, maxlimit)
+    facet = facetGrids(minlimit, maxlimit)
+
+    path = os.path.join(settings.FILES_DIR, ''.join(['summary/', data[0][lineId]['complex'].upper(), '/']))
+    fileTree = getListOfFiles(path)
+    # logger.warn((', '.join("{fname} {lname}".format_map(p) for p in a)))
+
+    # Put it all in variables
+    variables = {
+        "histForm": HistForm,
+        "2DmapForm": TwodmapFormLine,
+        "2DheatForm": TwodmapFormHeat,
+        "2DdistribForm": TwodmapFormDistrib,
+        "2DfacetForm": TwodmapFormFacet,
+        "filesSubfilesForm": FilesSubfiles,
+        'info': data[0][lineId],
+        'keys': data[1],
+        'fileTree': fileTree,
+        'bigID': lineId,
+        'histogram': histogram,
+        'timeSeries': timeSeries,
+        'line2d': line2d,
+        'heatmap': heatmap,
+        'distrib': distrib,
+        'facet': facet
+        }
+    
+    # Render it
+    return render(request, 'complexTable/detailedInfo.html', variables)
 
 def download(request):
     """
@@ -1345,6 +1460,7 @@ class DetailedView(generic.ListView):
             "2DheatForm": TwodmapFormHeat,
             "2DdistribForm": TwodmapFormDistrib,
             "2DfacetForm": TwodmapFormFacet,
+            "filesSubfilesForm": FilesSubfiles,
             'info': data[0][lineId],
             'keys': data[1],
             'fileTree': fileTree,

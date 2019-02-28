@@ -1,4 +1,15 @@
+import re
+
 from django import forms
+
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+### CUSTOM VALIDATORS ###
+
+def validate_path(value):
+    if not re.match(r'^[a-zA-Z0-9+_.]*$', value):
+        raise forms.ValidationError('Invalid value')
 
 class HistForm(forms.Form):
     mincutoff = forms.FloatField(label='min cutoff', required=False)
@@ -43,3 +54,12 @@ class TwodmapFormFacet(forms.Form):
     )
     mincutofffacet2d = forms.FloatField(label='min cutoff: ', required=False, initial = 0)
     maxcutofffacet2d = forms.FloatField(label='max cutoff: ', required=False)
+
+class FilesSubfiles(forms.Form):
+    # choices = forms.MultipleChoiceField(
+    #     widget  = forms.CheckboxSelectMultiple,
+    #     validators=[validate_path]
+    # )
+    choices = forms.CharField(
+        widget=forms.SelectMultiple
+    )

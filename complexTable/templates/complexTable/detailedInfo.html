@@ -251,42 +251,46 @@
                     {% endfor %}
                 </div>
                 <div class="col-md-3 col-sm-12">
-                    <div class="border" style="height:auto; width: 75%;">
-                        <div class="container">
-                            {% for key, value in fileTree.items %}
-                            <div class="row border border-top-0 border-left-0 border-right-0 border-info">
-                                <div class="col-1">
-                                    <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="{{ key }}">
-                                </div>
-                                <div class="col-1">{{ key }}</div>
-                            </div>
-                                {% for key2,value2 in value.items %}
-                                    <div class="row border border-top-0 border-left-0 border-right-0 border-info">
-                                        <div class="col-1">
-                                            <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="{{ key2 }}">
-                                        </div>
-                                        <div class="col-1"></div>
-                                        <div class="col-1">{{ key2 }}</div>
+                    <form method="POST" action="downloadPOST?id={{ bigID }}" id="filesSubfiles-form">
+                        {% csrf_token %}
+                        <div class="border" style="height:auto; width: 75%;">
+                            <div class="container">
+                                {% for key, value in fileTree.items %}
+                                <div class="row border border-top-0 border-left-0 border-right-0 border-info">
+                                    <div class="col-1">
+                                        <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="lv1-{{ key }}">
                                     </div>
-                                    {% for key3, value3 in value2.items %}
-                                    <div class="row border border-top-0 border-left-0 border-right-0 border-info">
-                                        <div class="col-1">
-                                            <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="{{ key3 }}">
+                                    <div class="col-1">{{ key }}</div>
+                                </div>
+                                    {% for key2,value2 in value.items %}
+                                        <div class="row border border-top-0 border-left-0 border-right-0 border-info">
+                                            <div class="col-1">
+                                                <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID{{ key2 }}" value="lv2-{{ key2 }}">
+                                            </div>
+                                            <div class="col-1">{% if forloop.last %}└─{% else %}├─{% endif %}</div>
+                                            <div class="col-1">{{ key2 }}</div>
                                         </div>
-                                        <div class="col-1"></div>
-                                        <div class="col-1"></div>
-                                        <div class="col-5">{{ key3 }}</div>
+                                        {% for key3, value3 in value2.items %}
+                                        <div class="row border border-top-0 border-left-0 border-right-0 border-info">
+                                            <div class="col-1">
+                                                <input valign="center" class="form-check-input {{ key2 }}" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID{{ key2 }}_{{ key3 }}" value="lv3-{{ key }}+._.+{{ key2 }}+._.+{{ key3 }}">
+                                            </div>
+                                            <div class="col-1">{% if forloop.parentloop.last %} {% else %}│{% endif %}</div>
+                                            <div class="col-1">{% if forloop.last %}└─{% else %}│{% endif %}</div>
+                                            <div class="col-5">{{ key3 }}</div>
                                         </div>
+                                        {% endfor %}
                                     {% endfor %}
+                                </div>
+                                <br/>
                                 {% endfor %}
                             </div>
-                            <br/>
-                            {% endfor %}
                         </div>
-                    </div>
-                    <div class="col-md-1 col-sm-12">
-                        <input value="Download" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input>
-                    </div>
+                        <div class="col-md-1 col-sm-12">
+                            <input type="submit" value="Download Files" form="filesSubfiles-form" class="tiny button">
+                            <!-- <input value="Download" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input> -->
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>

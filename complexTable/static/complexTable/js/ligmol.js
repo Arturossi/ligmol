@@ -94,3 +94,73 @@ $('input[name=choices]').change(function(){
 		$("#select_all").prop('checked', true);
 	}
 });
+
+// For detailed info
+
+//select all checkboxes
+$("#choicesID").change(function(){  //"select all" change 
+    $("input[name=choices]").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+});
+
+//".checkbox" change 
+$('input[name=choices]').change(function(){ 
+	//uncheck "select all", if one of the listed checkbox item is unchecked
+    if(false == $(this).prop("checked")){ //if this item is unchecked
+        $("#choicesID").prop('checked', false); //change "select all" checked status to false
+    }
+	//check "select all" if all checkbox items are checked
+	if ($('input[name=choices]:checked').length == $('input[name=choices]').length ){
+		$("#choicesID").prop('checked', true);
+	}
+});
+
+//select complex checkboxes
+$("#choicesIDcomplex").change(function(){  //"select all" change 
+    $(".complex").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+});
+
+//".complex" change 
+$('.complex').change(function(){ 
+	//uncheck "select all", if one of the listed checkbox item is unchecked
+    if(false == $(this).prop("checked")){ //if this item is unchecked
+        $("#choicesIDcomplex").prop('checked', false); //change "select all" checked status to false
+    }
+	//check "select all" if all checkbox items are checked
+	if ($('.complex:checked').length == $('.complex').length ){
+		$("#choicesIDcomplex").prop('checked', true);
+	}
+});
+
+//select guest checkboxes
+$("#choicesIDguest").change(function(){  //"select all" change 
+    $(".guest").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+});
+
+//".checkbox" change 
+$('.guest').change(function(){ 
+	//uncheck "select all", if one of the listed checkbox item is unchecked
+    if(false == $(this).prop("checked")){ //if this item is unchecked
+        $("#choicesIDguest").prop('checked', false); //change "select all" checked status to false
+    }
+	//check "select all" if all checkbox items are checked
+	if ($('.guest:checked').length == $('.guest').length ){
+		$("#choicesIDguest").prop('checked', true);
+	}
+});
+
+//select guest checkboxes
+$("#choicesIDhost").change(function(){  //"select all" change 
+    $(".host").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+});
+
+//".checkbox" change 
+$('.host').change(function(){ 
+	//uncheck "select all", if one of the listed checkbox item is unchecked
+    if(false == $(this).prop("checked")){ //if this item is unchecked
+        $("#choicesIDhost").prop('checked', false); //change "select all" checked status to false
+    }
+	//check "select all" if all checkbox items are checked
+	if ($('.host:checked').length == $('.host').length ){
+		$("#choicesIDhost").prop('checked', true);
+	}
+});

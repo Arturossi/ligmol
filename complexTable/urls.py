@@ -15,6 +15,7 @@ urlpatterns = [
 downloadpatterns = [
     path('download', views.download, name='download'),
     path('downloadFiles', views.downloadFiles, name='downloadFiles'),
+    path('downloadPOST', views.downloadPOST, name='downloadPOST'),
 ]
 
 # Patterns to work with ajax
