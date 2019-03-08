@@ -6,7 +6,7 @@
     <title>Home - LigMol</title>
     <meta name="description" content="A simple complex database">
     <link rel="stylesheet" href="{% static 'complexTable/bootstrap/bootstrap.min.css' %}">
-    <link rel="shortcut icon" type="image/png" href="{% static 'complexTable/img/favicon.ico' %}"/>
+    <link rel="shortcut icon" type="image/png" href="{% static 'complexTable/img/favicon.ico' %}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin:700">
     <link rel="stylesheet" href="{% static 'complexTable/fonts/font-awesome.min.css' %}">
@@ -15,31 +15,34 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- <script src="{% static 'complexTable/js/sorttable.js' %}"></script> -->
     <script src="{% static 'complexTable/js/saveSvgAsPng.js' %}"></script>
-    
+
     <link rel="stylesheet" href="{% static 'complexTable/c3.min.css' %}">
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="{% static 'complexTable/js/c3.js' %}"></script>
     <script src="{% static 'complexTable/js/html2canvas.min.js' %}"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
     <script>
-        
-        function exportChartToPng(chartID){
+
+        function exportChartToPng(chartID) {
             //fix weird back fill
-            d3.select('#'+chartID).selectAll("path").attr("fill", "none");
+            d3.select('#' + chartID).selectAll("path").attr("fill", "none");
             //fix no axes
-            d3.select('#'+chartID).selectAll("path.domain").attr("stroke", "black");
+            d3.select('#' + chartID).selectAll("path.domain").attr("stroke", "black");
             //fix no tick
-            d3.select('#'+chartID).selectAll(".tick line").attr("stroke", "black");
-            var svgElement = $('#'+chartID).find('svg')[0];
-            saveSvgAsPng(svgElement, chartID+'.png', { backgroundColor: "#FFFFFF"});
+            d3.select('#' + chartID).selectAll(".tick line").attr("stroke", "black");
+            var svgElement = $('#' + chartID).find('svg')[0];
+            saveSvgAsPng(svgElement, chartID + '.png', { backgroundColor: "#FFFFFF" });
         }
 
-        $(document).ready(function() {
-            document.getElementById("exportHistogram").addEventListener("click", function() {
+        $(document).ready(function () {
+            document.getElementById("exportHistogram").addEventListener("click", function () {
                 alert("Processing Histogram image.\nPlease, be patient, this might take a while.")
                 exportChartToPng("show-histogram");
             });
 
-            document.getElementById("exportTimeSeries").addEventListener("click", function() {
+            document.getElementById("exportTimeSeries").addEventListener("click", function () {
                 alert("Processing Time Series image.\nPlease, be patient, this might take a while.")
                 exportChartToPng("show-timeSeries");
             });
@@ -62,35 +65,47 @@
                 }
             }
         });
-        </script>
+    </script>
 </head>
 
 <body id="page-top">
-    <nav class="navbar navbar-light navbar-expand-md navbar navbar-expand-lg fixed-top" id="mainNav" style="background-color: #829eaa;">
-        <div class="container"><a class="navbar-brand js-scroll-trigger" href="{% url 'complexTable:index' %}">LigMol</a><button class="navbar-toggler navbar-toggler-right" data-toggle="collapse" data-target="#navbarResponsive" type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"
-                value="Menu"><i class="fa fa-bars"></i></button>
+    <nav class="navbar navbar-light navbar-expand-md navbar navbar-expand-lg fixed-top" id="mainNav"
+        style="background-color: #829eaa;">
+        <div class="container"><a class="navbar-brand js-scroll-trigger"
+                href="{% url 'complexTable:index' %}">LigMol</a><button class="navbar-toggler navbar-toggler-right"
+                data-toggle="collapse" data-target="#navbarResponsive" type="button" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation" value="Menu"><i class="fa fa-bars"></i></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="nav navbar-nav ml-auto">
-                    <li class="nav-item nav-link js-scroll-trigger pointer" role="presentation"><a class="nav-link js-scroll-trigger" onclick="location.href='{% url 'complexTable:index' %}' + '#home'">Home</a></li>
-                    <li class="nav-item nav-link js-scroll-trigger pointer" role="presentation"><a class="nav-link js-scroll-trigger" onclick="location.href='{% url 'complexTable:index' %}' + '#about'">About</a></li>
-                    <li class="nav-item nav-link js-scroll-trigger pointer" role="presentation"><a class="nav-link js-scroll-trigger" onclick="location.href='{% url 'complexTable:index' %}' + '#contact'">contact</a></li>
+                    <li class="nav-item nav-link js-scroll-trigger pointer" role="presentation"><a
+                            class="nav-link js-scroll-trigger"
+                            onclick="location.href='{% url 'complexTable:index' %}' + '#home'">Home</a></li>
+                    <li class="nav-item nav-link js-scroll-trigger pointer" role="presentation"><a
+                            class="nav-link js-scroll-trigger"
+                            onclick="location.href='{% url 'complexTable:index' %}' + '#about'">About</a></li>
+                    <li class="nav-item nav-link js-scroll-trigger pointer" role="presentation"><a
+                            class="nav-link js-scroll-trigger"
+                            onclick="location.href='{% url 'complexTable:index' %}' + '#contact'">contact</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-    
-    <section id="home" >
 
+    <section id="home">
         <div style='margin-top:90;'></div>
-        <br/>
+        <br />
         <section class="content-section-small">
             <div class="row">
                 <div class="col-md-3 col-sm-12 panel panel-default text-center">
-                    <input value="Return" type="button" onclick="location.href='{% url 'complexTable:complexTable' %}'" class="btn"></input>
-                    <div class="flip-card text-center" style="height: 580px; width: 400px; margin-left: 200px; margin-top: 20px;">
+                    <input value="Return" type="button" onclick="location.href='{% url 'complexTable:complexTable' %}'"
+                        class="btn"></input>
+                    <div class="flip-card text-center"
+                        style="height: 580px; width: 400px; margin-left: 200px; margin-top: 20px;">
                         <div class="flip-card-inner border rounded" style="height: 580px; width: 400px;">
-                            <div class="flip-card-front" >
-                                <img src="{% static 'data/mols/caffeine/CFF.png' %}" alt="Avatar"  style="width:200px;height:200px;">
+                            <div class="flip-card-front">
+                                <img src="{% static 'data/mols/caffeine/CFF.png' %}" alt="Avatar"
+                                    style="width:200px;height:200px;">
+
                                 <table class="table table-bordered table-condensed" id="chemicalDetails">
                                     <tr class="active">
                                         <th colspan="2">
@@ -128,7 +143,343 @@
                                 </table>
                             </div>
                             <div class="flip-card-back">
-                                <table class="table table-bordered table-condensed" id="chemicalComponentSummary" style="table-layout: fixed; width: 100%">
+
+                                <div id="polar"></div>
+                                <!-- <script>
+                                    $(function () {
+
+                                        var files = ["https://code.highcharts.com/stock/highstock.js",
+                                            "https://code.highcharts.com/highcharts-more.js",
+                                            "https://code.highcharts.com/highcharts-3d.js",
+                                            "https://code.highcharts.com/modules/data.js",
+                                            "https://code.highcharts.com/modules/exporting.js",
+                                            "https://code.highcharts.com/modules/funnel.js",
+                                            "https://code.highcharts.com/modules/annotations.js",
+                                            "https://code.highcharts.com/modules/solid-gauge.js"],
+                                            loaded = 0;
+
+                                        if (typeof window["HighchartsEditor"] === "undefined") {
+                                            window.HighchartsEditor = {
+                                                ondone: [cl],
+                                                hasWrapped: false,
+                                                hasLoaded: false
+                                            };
+                                            include(files[0]);
+                                        } else {
+                                            if (window.HighchartsEditor.hasLoaded) {
+                                                cl();
+                                            } else {
+                                                window.HighchartsEditor.ondone.push(cl);
+                                            }
+                                        }
+
+                                        function isScriptAlreadyIncluded(src) {
+                                            var scripts = document.getElementsByTagName("script");
+                                            for (var i = 0; i < scripts.length; i++) {
+                                                if (scripts[i].hasAttribute("src")) {
+                                                    if ((scripts[i].getAttribute("src") || "").indexOf(src) >= 0 || (scripts[i].getAttribute("src") === "http://code.highcharts.com/highcharts.js" && src === "https://code.highcharts.com/stock/highstock.js")) {
+                                                        return true;
+                                                    }
+                                                }
+                                            }
+                                            return false;
+                                        }
+
+                                        function check() {
+                                            if (loaded === files.length) {
+                                                for (var i = 0; i < window.HighchartsEditor.ondone.length; i++) {
+                                                    try {
+                                                        window.HighchartsEditor.ondone[i]();
+                                                    } catch (e) {
+                                                        console.error(e);
+                                                    }
+                                                }
+                                                window.HighchartsEditor.hasLoaded = true;
+                                            }
+                                        }
+
+                                        function include(script) {
+                                            function next() {
+                                                ++loaded;
+                                                if (loaded < files.length) {
+                                                    include(files[loaded]);
+                                                }
+                                                check();
+                                            }
+                                            if (isScriptAlreadyIncluded(script)) {
+                                                return next();
+                                            }
+                                            var sc = document.createElement("script");
+                                            sc.src = script;
+                                            sc.type = "text/javascript";
+                                            sc.onload = function () {
+                                                next();
+                                            };
+                                            document.head.appendChild(sc);
+                                        }
+
+                                        function each(a, fn) {
+                                            if (typeof a.forEach !== "undefined") {
+                                                a.forEach(fn);
+                                            } else {
+                                                for (var i = 0; i < a.length; i++) {
+                                                    if (fn) {
+                                                        fn(a[i]);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        var inc = {}, incl = [];
+                                        each(document.querySelectorAll("script"),
+                                            function (t) {
+                                                inc[t.src.substr(0, t.src.indexOf("?"))] = 1;
+                                            });
+                                        function cl() {
+                                            if (typeof window["Highcharts"] !== "undefined") {
+
+                                                var data = [
+                                                    {
+                                                        name: "GBMODEL",
+                                                        y: {{ info|getItem:'gbmodel' }}
+                                                    }, {
+                                                        name: "INTDIEL",
+                                                        y: {{ info|getItem:'intdiel' }}
+                                                    }, {
+                                                        name: "SALTCOM",
+                                                        y: {{ info|getItem:'saltcom' }}
+                                                    }, {
+                                                        name: "MMGBSA",
+                                                        y: {{ info|getItem:'mmgbsa' }}
+                                                    }, {
+                                                        name: "NMA",
+                                                        y: {{ info|getItem:'nma' }}
+                                                    }, {
+                                                        name: "DELTA_G",
+                                                        y: {{ info|getItem:'delta_g' }}
+                                                    }, {
+                                                        name: "exp",
+                                                        y: {{ info|getItem:'exp' }}
+                                                    }
+                                                ];
+
+                                    var myChart = Highcharts.Chart("polar", 
+                                    
+                
+                                    })();
+                                    });
+                                </script> -->
+                                <script>
+                                    (function () {
+                                        var files = ["https://code.highcharts.com/stock/highstock.js",
+                                            "https://code.highcharts.com/highcharts-more.js",
+                                            "https://code.highcharts.com/highcharts-3d.js",
+                                            "https://code.highcharts.com/modules/data.js",
+                                            "https://code.highcharts.com/modules/exporting.js",
+                                            "https://code.highcharts.com/modules/funnel.js",
+                                            "https://code.highcharts.com/modules/annotations.js",
+                                            "https://code.highcharts.com/modules/solid-gauge.js"],
+                                            loaded = 0;
+
+                                        if (typeof window["HighchartsEditor"] === "undefined") {
+                                            window.HighchartsEditor = {
+                                                ondone: [cl],
+                                                hasWrapped: false,
+                                                hasLoaded: false
+                                            };
+                                            include(files[0]);
+                                        } else {
+                                            if (window.HighchartsEditor.hasLoaded) {
+                                                cl();
+                                            } else {
+                                                window.HighchartsEditor.ondone.push(cl);
+                                            }
+                                        }
+
+                                        function isScriptAlreadyIncluded(src) {
+                                            var scripts = document.getElementsByTagName("script");
+                                            for (var i = 0; i < scripts.length; i++) {
+                                                if (scripts[i].hasAttribute("src")) {
+                                                    if ((scripts[i].getAttribute("src") || "").indexOf(src) >= 0 || (scripts[i].getAttribute("src") === "http://code.highcharts.com/highcharts.js" && src === "https://code.highcharts.com/stock/highstock.js")) {
+                                                        return true;
+                                                    }
+                                                }
+                                            }
+                                            return false;
+                                        }
+
+                                        function check() {
+                                            if (loaded === files.length) {
+                                                for (var i = 0; i < window.HighchartsEditor.ondone.length; i++) {
+                                                    try {
+                                                        window.HighchartsEditor.ondone[i]();
+                                                    } catch (e) {
+                                                        console.error(e);
+                                                    }
+                                                }
+                                                window.HighchartsEditor.hasLoaded = true;
+                                            }
+                                        }
+
+                                        function include(script) {
+                                            function next() {
+                                                ++loaded;
+                                                if (loaded < files.length) {
+                                                    include(files[loaded]);
+                                                }
+                                                check();
+                                            }
+                                            if (isScriptAlreadyIncluded(script)) {
+                                                return next();
+                                            }
+                                            var sc = document.createElement("script");
+                                            sc.src = script;
+                                            sc.type = "text/javascript";
+                                            sc.onload = function () {
+                                                next();
+                                            };
+                                            document.head.appendChild(sc);
+                                        }
+
+                                        function each(a, fn) {
+                                            if (typeof a.forEach !== "undefined") {
+                                                a.forEach(fn);
+                                            } else {
+                                                for (var i = 0; i < a.length; i++) {
+                                                    if (fn) {
+                                                        fn(a[i]);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        var inc = {}, incl = [];
+                                        each(document.querySelectorAll("script"),
+                                            function (t) {
+                                                inc[t.src.substr(0, t.src.indexOf("?"))] = 1;
+                                            });
+                                        function cl() {
+                                            if (typeof window["Highcharts"] !== "undefined") {
+                                                var data = [{
+                                                        name: "",
+                                                        y: null
+                                                    }, {
+                                                        name: "GBMODEL",
+                                                        y: {{ info|getItem:'gbmodel' }}
+                                                    }, {
+                                                        name: "INTDIEL",
+                                                        y: {{ info|getItem:'intdiel' }}
+                                                    }, {
+                                                        name: "SALTCOM",
+                                                        y: {{ info|getItem:'saltcom' }}
+                                                    }, {
+                                                        name: "MMGBSA",
+                                                        y: {{ info|getItem:'mmgbsa' }}
+                                                    }, {
+                                                        name: "NMA",
+                                                            y: {{ info|getItem:'nma' }}
+                                                    }, {
+                                                        name: "DELTA_G",
+                                                        y: {{ info|getItem:'delta_g' }}
+                                                    }, {
+                                                        name: "exp",
+                                                        y: {{ info|getItem:'exp' }}
+                                                    }]
+
+                                                var options = {
+                                                    chart: {
+                                                        type: 'line',
+                                                        polar: true,
+                                                        width: null,
+                                                        height: null
+                                                    },
+
+                                                    title: {
+                                                        text: 'Molecule {{ info|getItem:"complex" }}'
+                                                    },
+
+                                                    subtitle: {
+                                                        text: 'Characteristics'
+                                                    },
+
+                                                    pane: {
+                                                        startAngle: 0,
+                                                        endAngle: 360
+                                                    },
+
+                                                    legend: {
+                                                        enabled: false
+                                                    },
+
+                                                    xAxis: {
+                                                        tickInterval: 45,
+                                                        min: 0,
+                                                        max: 360,
+                                                        labels: {
+                                                            enabled: false
+                                                        },
+                                                        startOnTick: false,
+                                                        endOnTick: false
+                                                    },
+
+                                                    // yAxis: {
+                                                    //     min: 0,
+                                                    //     labels: {
+                                                    //         enabled: false
+                                                    //     },
+                                                    // },
+
+                                                    plotOptions: {
+                                                        series: {
+                                                            pointStart: 0,
+                                                            pointInterval: 45,
+                                                            pointPlacement: 'between',
+                                                            states: {
+                                                                hover: {
+                                                                    enabled: true
+                                                                }
+                                                            },
+
+                                                            dataLabels: {
+                                                                enabled: true,
+                                                                format: '<span class="wheel-label" style="color: {point.color}">{point.name}</span>',
+                                                                formatter: function(){
+                                                                    if(this.y != null)
+                                                                        return this.y;
+                                                                },
+                                                                style: {
+                                                                    textShadow: false,
+                                                                    width: 150,
+                                                                    fontSize: "16px"
+                                                                },
+                                                            }
+                                                        },
+
+                                                        column: {
+                                                            pointPadding: 0,
+                                                            groupPadding: 0
+                                                        },
+                                                    },
+
+                                                    series: [{
+                                                        showInLegend: false,
+                                                        type: 'line',
+                                                        name: 'Molecule data',
+                                                        turboThreshold: 0,
+                                                        data: data
+                                                    }],
+
+                                                    credits: {
+                                                        enabled: false
+                                                    }
+                                                }
+
+                                            new Highcharts.Chart("polar", options);
+                                            }
+                                        }
+                                    }) ();
+                                </script>
+                                <!-- <table class="table table-bordered table-condensed" id="chemicalComponentSummary" style="table-layout: fixed; width: 100%">
                                     <tr class="active">
                                         <th colspan="2">
                                             <h4>Chemical Component Summary</h4>
@@ -166,7 +517,7 @@
                                         <th>InChIKey</th>
                                         <td>RYYVLZVUVIJVGH-UHFFFAOYSA-N</td>
                                     </tr>
-                                </table>
+                                </table> -->
                             </div>
                         </div>
                     </div>
@@ -179,15 +530,15 @@
                             // var loadFileUrl = "{% static 'data/mols/CFF.cif' %}";
                             var loadFileUrl = "{% static 'data/mols/BCD.cif' %}";
                             var loadTrajUrl = "{% static 'summary/CB7-G01/resp/host/imaged.nc' %}";
-                            
-                            document.addEventListener("DOMContentLoaded", function() {
+
+                            document.addEventListener("DOMContentLoaded", function () {
                                 function e() {
                                     return d ? "not _h and " + r : r
                                 }
 
                                 function t(e, t) {
                                     var n = !1;
-                                    return e.getView(new NGL.Selection(t)).eachAtom(function(e) {
+                                    return e.getView(new NGL.Selection(t)).eachAtom(function (e) {
                                         (isNaN(e.x) || isNaN(e.y) || isNaN(e.z)) && (n = !0)
                                     }), n
                                 }
@@ -210,7 +561,7 @@
                                         backgroundColor: "white",
                                         clipDist: 1
                                     });
-                                u.loadFile(loadFileUrl).then(function(n) {
+                                u.loadFile(loadFileUrl).then(function (n) {
                                     r = t(n.structure, "/0") ? "/1" : "/0", c = n, c.setSelection(e()), a = n.addRepresentation("ball+stick", {
                                         multipleBond: "symmetric"
                                     }), l = n.addRepresentation("label", {
@@ -237,7 +588,8 @@
                                 n(), document.getElementById("nglRotateBtn").addEventListener("click", n), document.getElementById("nglLabelsBtn").addEventListener("click", i), document.getElementById("nglHydrogensBtn").addEventListener("click", o)
                             });
                         </script>
-                        <div id="viewport" class="border px-3" style="width: 100%; height: 400px; margin-left: 5px; margin-right: 5px; overflow: hidden;">
+                        <div id="viewport" class="border px-3"
+                            style="width: 100%; height: 400px; margin-left: 5px; margin-right: 5px; overflow: hidden;">
                             <!-- <div style="display: none; position: fixed; z-index: 1000000; pointer-events: none; background-color: rgba(0, 0, 0, 0.6); color: lightgrey; padding: 8px; font-family: sans-serif; bottom: 603px; left: 1007px;">atom: [CFF]1.N1/0 (CFF.cif)</div> -->
                         </div>
                         <div class="text-center">
@@ -247,7 +599,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2 col-sm-12">{% for key, val in info.items %}{% if key|lower == "complex" %}<h1 id="complex">{{ val }}</h1>{% elif key|lower != "id" %}<p class="text-left">{{ key }}: {{ val }}</p>{% endif %}
+                <div class="col-md-2 col-sm-12">{% for key, val in info.items %}{% if key|lower == "complex" %}<h1
+                        id="complex">{{ val }}</h1>{% elif key|lower != "id" %}<p class="text-left">{{ key }}: {{ val }}
+                    </p>{% endif %}
                     {% endfor %}
                 </div>
                 <div class="col-md-3 col-sm-12">
@@ -258,110 +612,124 @@
                                 {% for key, value in fileTree.items %}
                                 <div class="row border border-top-0 border-left-0 border-right-0 border-info">
                                     <div class="col-1">
-                                        <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="lv1-{{ key }}">
+                                        <input valign="center" class="form-check-input" style="margin-left: 0px;"
+                                            type="checkbox" name="choices" id="choicesID" value="lv1-{{ key }}">
                                     </div>
                                     <div class="col-1">{{ key }}</div>
                                 </div>
-                                    {% for key2,value2 in value.items %}
-                                        <div class="row border border-top-0 border-left-0 border-right-0 border-info">
-                                            <div class="col-1">
-                                                <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID{{ key2 }}" value="lv2-{{ key2 }}">
-                                            </div>
-                                            <div class="col-1">{% if forloop.last %}└─{% else %}├─{% endif %}</div>
-                                            <div class="col-1">{{ key2 }}</div>
-                                        </div>
-                                        {% for key3, value3 in value2.items %}
-                                        <div class="row border border-top-0 border-left-0 border-right-0 border-info">
-                                            <div class="col-1">
-                                                <input valign="center" class="form-check-input {{ key2 }}" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID{{ key2 }}_{{ key3 }}" value="lv3-{{ key }}+._.+{{ key2 }}+._.+{{ key3 }}">
-                                            </div>
-                                            <div class="col-1">{% if forloop.parentloop.last %} {% else %}│{% endif %}</div>
-                                            <div class="col-1">{% if forloop.last %}└─{% else %}│{% endif %}</div>
-                                            <div class="col-5">{{ key3 }}</div>
-                                        </div>
-                                        {% endfor %}
-                                    {% endfor %}
+                                {% for key2,value2 in value.items %}
+                                <div class="row border border-top-0 border-left-0 border-right-0 border-info">
+                                    <div class="col-1">
+                                        <input valign="center" class="form-check-input" style="margin-left: 0px;"
+                                            type="checkbox" name="choices" id="choicesID{{ key2 }}"
+                                            value="lv2-{{ key2 }}">
+                                    </div>
+                                    <div class="col-1">{% if forloop.last %}└─{% else %}├─{% endif %}</div>
+                                    <div class="col-1">{{ key2 }}</div>
                                 </div>
-                                <br/>
+                                {% for key3, value3 in value2.items %}
+                                <div class="row border border-top-0 border-left-0 border-right-0 border-info">
+                                    <div class="col-1">
+                                        <input valign="center" class="form-check-input {{ key2 }}"
+                                            style="margin-left: 0px;" type="checkbox" name="choices"
+                                            id="choicesID{{ key2 }}_{{ key3 }}"
+                                            value="lv3-{{ key }}+._.+{{ key2 }}+._.+{{ key3 }}">
+                                    </div>
+                                    <div class="col-1">{% if forloop.parentloop.last %} {% else %}│{% endif %}</div>
+                                    <div class="col-1">{% if forloop.last %}└─{% else %}│{% endif %}</div>
+                                    <div class="col-5">{{ key3 }}</div>
+                                </div>
+                                {% endfor %}
                                 {% endfor %}
                             </div>
+                            <br />
+                            {% endfor %}
                         </div>
-                        <div class="col-md-1 col-sm-12">
-                            <input type="submit" value="Download Files" form="filesSubfiles-form" class="tiny button">
-                            <!-- <input value="Download" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input> -->
-                        </div>
-                    </form>
                 </div>
+                <div class="col-md-1 col-sm-12">
+                    <input type="submit" value="Download Files" form="filesSubfiles-form" class="tiny button">
+                    <!-- <input value="Download" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input> -->
+                </div>
+                </form>
+            </div>
             </div>
         </section>
         <section id="graphicsdiv-id" style="width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <span style="width: 50px;"></span>
                 <li class="nav-item">
-                    <a class="nav-link active" id="twodmap-tab" data-toggle="tab" href="#twodmap" role="tab" aria-controls="twodmap" aria-selected="true">2D Map</a>
+                    <a class="nav-link active" id="twodmap-tab" data-toggle="tab" href="#twodmap" role="tab"
+                        aria-controls="twodmap" aria-selected="true">2D Map</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="timeSeries-tab" data-toggle="tab" href="#timeSeries" role="tab" aria-controls="timeSeries" aria-selected="false">Time Series</a>
+                    <a class="nav-link" id="timeSeries-tab" data-toggle="tab" href="#timeSeries" role="tab"
+                        aria-controls="timeSeries" aria-selected="false">Time Series</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="histogram-tab" data-toggle="tab" href="#histogram" role="tab" aria-controls="histogram" aria-selected="false">histogram</a>
+                    <a class="nav-link" id="histogram-tab" data-toggle="tab" href="#histogram" role="tab"
+                        aria-controls="histogram" aria-selected="false">histogram</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
+                    <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab"
+                        aria-controls="settings" aria-selected="false">Settings</a>
                 </li>
             </ul>
-                    
+
             <div class="tab-content">
                 <style id="canvas-style">
-                    
                 </style>
-                <div class="tab-pane fade high show active text-center" id="twodmap" role="tabpanel" aria-labelledby="twodmap-tab">
+                <div class="tab-pane fade high show active text-center" id="twodmap" role="tabpanel"
+                    aria-labelledby="twodmap-tab">
                     <div style="margin: 10 15 0 15">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <span style="width: 50px;"></span>
                             <li class="nav-item">
-                                <a class="nav-link active" id="lineplot-tab" data-toggle="tab" href="#lineplot" role="tab" aria-controls="lineplot" aria-selected="true">2D Line plots</a>
+                                <a class="nav-link active" id="lineplot-tab" data-toggle="tab" href="#lineplot"
+                                    role="tab" aria-controls="lineplot" aria-selected="true">2D Line plots</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="heatmap-tab" data-toggle="tab" href="#heatmap" role="tab" aria-controls="heatmap" aria-selected="false">2D Heatmap</a>
+                                <a class="nav-link" id="heatmap-tab" data-toggle="tab" href="#heatmap" role="tab"
+                                    aria-controls="heatmap" aria-selected="false">2D Heatmap</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="distrib-tab" data-toggle="tab" href="#distrib" role="tab" aria-controls="distrib" aria-selected="false">2D Distribution</a>
+                                <a class="nav-link" id="distrib-tab" data-toggle="tab" href="#distrib" role="tab"
+                                    aria-controls="distrib" aria-selected="false">2D Distribution</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="facet-tab" data-toggle="tab" href="#facet" role="tab" aria-controls="facet" aria-selected="false">2D FacetGrids</a>
+                                <a class="nav-link" id="facet-tab" data-toggle="tab" href="#facet" role="tab"
+                                    aria-controls="facet" aria-selected="false">2D FacetGrids</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <style id="canvas-style2">
                             </style>
-                            <div class="tab-pane fade high show active text-center" id="lineplot" role="tabpanel" aria-labelledby="lineplot-tab">
-                                <br/>
+                            <div class="tab-pane fade high show active text-center" id="lineplot" role="tabpanel"
+                                aria-labelledby="lineplot-tab">
+                                <br />
                                 <form method="POST" action="line2d-form" id="line2d-form">
                                     {% csrf_token %}
                                     {% for choice in 2DmapForm.types2d %}
                                     {{ choice.choice_label }}
-                                    <span class="radio" style="margin: 10 10 10 10">{{ choice.tag }}</span>   
+                                    <span class="radio" style="margin: 10 10 10 10">{{ choice.tag }}</span>
                                     {% endfor %}
-                                    <br/>
+                                    <br />
                                     {{ 2DmapForm.mincutoff2d.label }} {{ 2DmapForm.mincutoff2d }}
                                     {{ 2DmapForm.maxcutoff2d.label }} {{ 2DmapForm.maxcutoff2d }}
                                     <input type="submit" value="Update Graphic" class="tiny button">
                                 </form>
                                 <div id="line2Dcontent">
-                                    <img src="data:image/png;base64, {{ line2d }}" id="line-img" alt="2D simple line graphic"/>
+                                    <img src="data:image/png;base64, {{ line2d }}" id="line-img"
+                                        alt="2D simple line graphic" />
                                 </div>
 
                                 <script>
                                     // Submit post on submit
-                                    $('#line2d-form').on('submit', function(event){
+                                    $('#line2d-form').on('submit', function (event) {
                                         event.preventDefault();
-                                        if(parseFloat($("#id_mincutoff2d").val()) > parseFloat($("#id_maxcutoff2d").val()) && ($("#id_maxcutoff2d").val() != "" || $("#id_maxcutoff2d").val() != ""))
-                                        {
+                                        if (parseFloat($("#id_mincutoff2d").val()) > parseFloat($("#id_maxcutoff2d").val()) && ($("#id_maxcutoff2d").val() != "" || $("#id_maxcutoff2d").val() != "")) {
                                             alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
                                         }
-                                        else
-                                        {
+                                        else {
                                             line2d_post();
                                         }
                                     });
@@ -369,12 +737,12 @@
                                     // AJAX for posting
                                     function line2d_post() {
                                         $.ajax({
-                                            url : "line2d_post", // the endpoint
-                                            type : "POST", // http method
-                                            data : { mincutoff2d: $('#id_mincutoff2d').val(), maxcutoff2d : $('#id_maxcutoff2d').val(), types2d : $('input[name=types2d]:checked').val() }, // data sent with the post request
+                                            url: "line2d_post", // the endpoint
+                                            type: "POST", // http method
+                                            data: { mincutoff2d: $('#id_mincutoff2d').val(), maxcutoff2d: $('#id_maxcutoff2d').val(), types2d: $('input[name=types2d]:checked').val() }, // data sent with the post request
 
                                             // handle a successful response
-                                            success : function(json) {
+                                            success: function (json) {
                                                 var data = json
                                                 $("#line2Dcontent").empty(); // Remove data from hist-code DOM
                                                 $("#line2Dcontent").append(data['line2d'])
@@ -383,44 +751,36 @@
                                             },
 
                                             // handle a non-successful response
-                                            error : function(xhr,errmsg,err) {
-                                                $('#line2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                            error: function (xhr, errmsg, err) {
+                                                $('#line2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                                                     " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                                                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                                             }
                                         });
                                     };
                                 </script>
-                                <!-- <script if="line-code">
-                                    $(document).ready(function() {
-                                        var i = new Image(); 
-                                        i.src = $("#line-img").attr('src');
-                                        $("#line-img").attr('style', 'height: ' + i.height*0.6 + '; width: ' + i.width*0.6 + ';');
-                                        $("graphicsdiv-id").attr('style', 'width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;');
-                                    });
-                                </script> -->
                             </div>
-                            <div class="tab-pane fade high text-center" id="heatmap" role="tabpanel" aria-labelledby="heatmap-tab">
-                                <br/>
+                            <div class="tab-pane fade high text-center" id="heatmap" role="tabpanel"
+                                aria-labelledby="heatmap-tab">
+                                <br />
                                 <form method="POST" action="heat2d-form" id="heat2d-form">
                                     {% csrf_token %}
                                     {{ 2DheatForm }}
                                     <input type="submit" value="Update Graphic" class="tiny button">
                                 </form>
                                 <div id="heat2Dcontent">
-                                    <img src="data:image/png;base64, {{ heatmap }}" id="heat-img" alt="2D map heatmap"/>
+                                    <img src="data:image/png;base64, {{ heatmap }}" id="heat-img"
+                                        alt="2D map heatmap" />
                                 </div>
 
                                 <script>
                                     // Submit post on submit
-                                    $('#heat2d-form').on('submit', function(event){
+                                    $('#heat2d-form').on('submit', function (event) {
                                         event.preventDefault();
-                                        if(parseFloat($("#id_mincutoffheat2d").val()) > parseFloat($("#id_maxcutoffheat2d").val()) && ($("#id_maxcutoffheat2d").val() != "" || $("#id_maxcutoffheat2d").val() != ""))
-                                        {
+                                        if (parseFloat($("#id_mincutoffheat2d").val()) > parseFloat($("#id_maxcutoffheat2d").val()) && ($("#id_maxcutoffheat2d").val() != "" || $("#id_maxcutoffheat2d").val() != "")) {
                                             alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
                                         }
-                                        else
-                                        {
+                                        else {
                                             heat2d_post();
                                         }
                                     });
@@ -428,12 +788,12 @@
                                     // AJAX for posting
                                     function heat2d_post() {
                                         $.ajax({
-                                            url : "heat2d_post", // the endpoint
-                                            type : "POST", // http method
-                                            data : { mincutoffheat2d: $('#id_mincutoffheat2d').val(), maxcutoffheat2d : $('#id_maxcutoffheat2d').val() }, // data sent with the post request
+                                            url: "heat2d_post", // the endpoint
+                                            type: "POST", // http method
+                                            data: { mincutoffheat2d: $('#id_mincutoffheat2d').val(), maxcutoffheat2d: $('#id_maxcutoffheat2d').val() }, // data sent with the post request
 
                                             // handle a successful response
-                                            success : function(json) {
+                                            success: function (json) {
                                                 var data = json
                                                 $("#heat2Dcontent").empty(); // Remove data from hist-code DOM
                                                 $("#heat2Dcontent").append(data['heat2d'])
@@ -442,50 +802,42 @@
                                             },
 
                                             // handle a non-successful response
-                                            error : function(xhr,errmsg,err) {
-                                                $('#line2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                            error: function (xhr, errmsg, err) {
+                                                $('#line2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                                                     " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                                                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                                             }
                                         });
                                     };
                                 </script>
-                                <!-- <script if="heat-code">
-                                    $(document).ready(function() {
-                                        var i = new Image(); 
-                                        i.src = $("#heat-img").attr('src');
-                                        $("#heat-img").attr('style', 'height: ' + i.height*0.6 + '; width: ' + i.width*0.6 + ';');
-                                        $("graphicsdiv-id").attr('style', 'width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;');
-                                    });
-                                </script> -->
                             </div>
-                            <div class="tab-pane fade high text-center" id="distrib" role="tabpanel" aria-labelledby="distrib-tab">
-                                <br/>
+                            <div class="tab-pane fade high text-center" id="distrib" role="tabpanel"
+                                aria-labelledby="distrib-tab">
+                                <br />
                                 <form method="POST" action="distrib2d-form" id="distrib2d-form">
                                     {% csrf_token %}
                                     {% for choice in 2DdistribForm.types2ddistrib %}
                                     {{ choice.choice_label }}
-                                    <span class="radio" style="margin: 10 10 10 10">{{ choice.tag }}</span>   
+                                    <span class="radio" style="margin: 10 10 10 10">{{ choice.tag }}</span>
                                     {% endfor %}
-                                    <br/>
+                                    <br />
                                     {{ 2DdistribForm.mincutoffdistrib2d.label }} {{ 2DdistribForm.mincutoffdistrib2d }}
                                     {{ 2DdistribForm.maxcutoffdistrib2d.label }} {{ 2DdistribForm.maxcutoffdistrib2d }}
                                     <input type="submit" value="Update Graphic" class="tiny button">
                                 </form>
                                 <div id="distrib2Dcontent">
-                                    <img src="data:image/png;base64, {{ distrib }}" id="distrib-img" alt="2D map distribuition graphic strip style"/>
+                                    <img src="data:image/png;base64, {{ distrib }}" id="distrib-img"
+                                        alt="2D map distribuition graphic strip style" />
                                 </div>
 
                                 <script>
                                     // Submit post on submit
-                                    $('#distrib2d-form').on('submit', function(event){
+                                    $('#distrib2d-form').on('submit', function (event) {
                                         event.preventDefault();
-                                        if(parseFloat($("#id_mincutoffdistrib2d").val()) > parseFloat($("#id_maxcutoffdistrib2d").val()) && ($("#id_maxcutoffdistrib2d").val() != "" || $("#id_maxcutoffdistrib2d").val() != ""))
-                                        {
+                                        if (parseFloat($("#id_mincutoffdistrib2d").val()) > parseFloat($("#id_maxcutoffdistrib2d").val()) && ($("#id_maxcutoffdistrib2d").val() != "" || $("#id_maxcutoffdistrib2d").val() != "")) {
                                             alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
                                         }
-                                        else
-                                        {
+                                        else {
                                             distrib2d_post();
                                         }
                                     });
@@ -493,12 +845,12 @@
                                     // AJAX for posting
                                     function distrib2d_post() {
                                         $.ajax({
-                                            url : "distrib2d_post", // the endpoint
-                                            type : "POST", // http method
-                                            data : { mincutoffdistrib2d : $('#id_mincutoffdistrib2d').val(), maxcutoffdistrib2d : $('#id_maxcutoffdistrib2d').val(), types2ddistrib : $('input[name=types2ddistrib]:checked').val() }, // data sent with the post request
+                                            url: "distrib2d_post", // the endpoint
+                                            type: "POST", // http method
+                                            data: { mincutoffdistrib2d: $('#id_mincutoffdistrib2d').val(), maxcutoffdistrib2d: $('#id_maxcutoffdistrib2d').val(), types2ddistrib: $('input[name=types2ddistrib]:checked').val() }, // data sent with the post request
 
                                             // handle a successful response
-                                            success : function(json) {
+                                            success: function (json) {
                                                 var data = json
                                                 $("#distrib2Dcontent").empty(); // Remove data from hist-code DOM
                                                 $("#distrib2Dcontent").append(data['distrib2d'])
@@ -507,50 +859,42 @@
                                             },
 
                                             // handle a non-successful response
-                                            error : function(xhr,errmsg,err) {
-                                                $('#distrib2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                            error: function (xhr, errmsg, err) {
+                                                $('#distrib2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                                                     " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                                                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                                             }
                                         });
                                     };
                                 </script>
-                                <!-- <script if="distrib-code">
-                                    $(document).ready(function() {
-                                        var i = new Image(); 
-                                        i.src = $("#distrib-img").attr('src');
-                                        $("#distrib-img").attr('style', 'height: ' + i.height*0.6 + '; width: ' + i.width*0.6 + ';');
-                                        $("graphicsdiv-id").attr('style', 'width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;');
-                                    });
-                                </script> -->
                             </div>
-                            <div class="tab-pane fade high text-center" id="facet" role="tabpanel" aria-labelledby="facet-tab">
-                                <br/>
+                            <div class="tab-pane fade high text-center" id="facet" role="tabpanel"
+                                aria-labelledby="facet-tab">
+                                <br />
                                 <form method="POST" action="facet2d-form" id="facet2d-form">
                                     {% csrf_token %}
                                     {% for choice in 2DfacetForm.types2dfacet %}
                                     {{ choice.choice_label }}
-                                    <span class="radio" style="margin: 10 10 10 10">{{ choice.tag }}</span>   
+                                    <span class="radio" style="margin: 10 10 10 10">{{ choice.tag }}</span>
                                     {% endfor %}
-                                    <br/>
+                                    <br />
                                     {{ 2DfacetForm.mincutofffacet2d.label }} {{ 2DfacetForm.mincutofffacet2d }}
                                     {{ 2DfacetForm.maxcutofffacet2d.label }} {{ 2DfacetForm.maxcutofffacet2d }}
                                     <input type="submit" value="Update Graphic" class="tiny button">
                                 </form>
                                 <div id="facet2Dcontent">
-                                    <img src="data:image/png;base64, {{ facet }}" id="facet-img" alt="2D map facet grid graphic"/>
+                                    <img src="data:image/png;base64, {{ facet }}" id="facet-img"
+                                        alt="2D map facet grid graphic" />
                                 </div>
 
                                 <script>
                                     // Submit post on submit
-                                    $('#facet2d-form').on('submit', function(event){
+                                    $('#facet2d-form').on('submit', function (event) {
                                         event.preventDefault();
-                                        if(parseFloat($("#id_mincutofffacet2d").val()) > parseFloat($("#id_maxcutofffacet2d").val()) && ($("#id_maxcutofffacet2d").val() != "" || $("#id_maxcutofffacet2d").val() != ""))
-                                        {
+                                        if (parseFloat($("#id_mincutofffacet2d").val()) > parseFloat($("#id_maxcutofffacet2d").val()) && ($("#id_maxcutofffacet2d").val() != "" || $("#id_maxcutofffacet2d").val() != "")) {
                                             alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
                                         }
-                                        else
-                                        {
+                                        else {
                                             facet2d_post();
                                         }
                                     });
@@ -558,12 +902,12 @@
                                     // AJAX for posting
                                     function facet2d_post() {
                                         $.ajax({
-                                            url : "facet2d_post", // the endpoint
-                                            type : "POST", // http method
-                                            data : { mincutofffacet2d : $('#id_mincutofffacet2d').val(), maxcutofffacet2d : $('#id_maxcutofffacet2d').val(), types2dfacet : $('input[name=types2dfacet]:checked').val() }, // data sent with the post request
+                                            url: "facet2d_post", // the endpoint
+                                            type: "POST", // http method
+                                            data: { mincutofffacet2d: $('#id_mincutofffacet2d').val(), maxcutofffacet2d: $('#id_maxcutofffacet2d').val(), types2dfacet: $('input[name=types2dfacet]:checked').val() }, // data sent with the post request
 
                                             // handle a successful response
-                                            success : function(json) {
+                                            success: function (json) {
                                                 var data = json
 
                                                 // var i = new Image(); 
@@ -577,8 +921,8 @@
                                             },
 
                                             // handle a non-successful response
-                                            error : function(xhr,errmsg,err) {
-                                                $('#facet2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                            error: function (xhr, errmsg, err) {
+                                                $('#facet2Dcontent').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                                                     " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                                                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                                             }
@@ -586,10 +930,10 @@
                                     };
                                 </script>
                                 <script id="facet-code">
-                                    $(document).ready(function() {
-                                        var i = new Image(); 
+                                    $(document).ready(function () {
+                                        var i = new Image();
                                         i.src = $("#facet-img").attr('src');
-                                        $("#facet-img").attr('style', 'height: ' + i.height*0.6 + '; width: ' + i.width*0.6 + ';');
+                                        $("#facet-img").attr('style', 'height: ' + i.height * 0.6 + '; width: ' + i.width * 0.6 + ';');
                                         $("graphicsdiv-id").attr('style', 'width: 100%; height: auto; overflow-y: hidden; overflow-x: hidden;');
                                     });
                                 </script>
@@ -597,175 +941,177 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade high" id="timeSeries" role="tabpanel" aria-labelledby="timeSeries-tab">
-                    <div class="border-bottom">
-                        <input id="exportTimeSeries" type="button" value="Export graphic as image" class="mx-4 my-2"></input>
-                    </div>
-                    <div style="width:auto;">
-                        <style>
-                            svg {
-                                display: block;
-                                margin: auto;
-                            }
-                        </style>
-                        <div id="show-timeSeries" class="center" style="width: auto; overflow-x: auto; margin-left: 10px; margin-right: 10px;"></div>
-                    </div>
-                    <script id="ts-code">
-                        var ts = c3.generate({
-                            bindto: '#show-timeSeries',
-                            data: {
-                                x: '{{ timeSeries|getItem:"x" }}',
-                                columns: [
-                                    {% for data in timeSeries|getItem:'datas' %}[{% for dt in data %}{% if forloop.first %}'{{ dt }}'{% else %}{{ dt }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %}, 
-                                    {% endif %}{% endfor %}
-                                ]
-                            },
-                            size: {
-                                height: 700,
-                                width: {{ timeSeries|getItem:'dsize' }}
-                            },
-                            axis: {
-                                x: {
-                                    tick: {
-                                        rotate: 60,
-                                        culling: {
-                                          max: 300
-                                        },
-                                        multiline: false
-                                    },
-                                    padding: 0.01
-                                }
-                            },
-                            padding: {
-                                bottom: 20,
-                                right: 20
-                            }
-                        });
-                    </script>
+            </div>
+            <div class="tab-pane fade high" id="timeSeries" role="tabpanel" aria-labelledby="timeSeries-tab">
+                <div class="border-bottom">
+                    <input id="exportTimeSeries" type="button" value="Export graphic as image"
+                        class="mx-4 my-2"></input>
                 </div>
-                <div class="tab-pane fade high" id="histogram" role="tabpanel" aria-labelledby="histogram-tab" style="height: 900px;">
-                    <div class="border-bottom">
-                        <input id="exportHistogram" type="button" value="Export graphic as image" class="mx-4 my-2"></input>
-                        <form method="POST" action="hist-form" id="hist-form">
-                            <div class="mx-4 my-2">
-                                {% csrf_token %}
-                                {{ histForm }}
-                                <input type="submit" value="Update Graphic" class="tiny button">
-                            </div>
-                        </form>
-                    </div>
-                    <div style="width:auto;">
-                        <style>
-                            svg {
-                                display: block;
-                                margin: auto;
-                            }
-                        </style>
-                        <div id="show-histogram" class="center" style="width: auto; overflow-x: auto;"></div>
-                    </div>
-                    <script id="hist-code">
-                        var chart = c3.generate({
-                            bindto: '#show-histogram',
-                            data: {
-                                columns: [
-                                    {% for data in histogram|getItem:'datas' %}[{% for dt in data %}{% if forloop.first %}'{{ dt }}'{% else %}{{ dt }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %}, 
-                                    {% endif %}{% endfor %}
-                                ],
-                                type: 'bar'
-                            },
-                            size: {
-                                height: 600,
-                                width: {{ histogram|getItem:'dsize' }}
-                            },
-                            padding: {
-                                    bottom: 80,
-                                    right: 20
-                            },
-                            axis: {
-                                x: {
-                                    type: 'category',
-                                    tick: {
-                                        rotate: 60,
-                                        multiline: false
-                                    },
-                                    categories: [{% for name in histogram|getItem:'names' %}'{{ name }}'{% if not forloop.last %}, {% endif %}{% endfor %}]
-                                }
-                            },
-                            bar: {
-                                width: {
-                                    ratio: 0.7
-                                }
-                            }
-                        });
-                    </script>
-                    <script>
-                        // Submit post on submit
-                        $('#hist-form').on('submit', function(event){
-                            event.preventDefault();
-                            console.log("form submitted!")  // sanity check
-                            if(parseFloat($("#id_mincutoff").val()) > parseFloat($("#id_maxcutoff").val()) && ($("#id_maxcutoff").val() != "" || $("#id_maxcutoff").val() != ""))
-                            {
-                                alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
-                            }
-                            else
-                            {
-                                hist_post();
-                            }
-                        });
-
-                        // AJAX for posting
-                        function hist_post() {
-                            console.log("create post is working!") // sanity check
-                            $.ajax({
-                                url : "hist_post", // the endpoint
-                                type : "POST", // http method
-                                data : { mincutoff : $('#id_mincutoff').val(), maxcutoff : $('#id_maxcutoff').val() }, // data sent with the post request
-
-                                // handle a successful response
-                                success : function(json) {
-                                    //$('#min_val').val(''); // remove the value from the input
-                                    //$('#max_val').val(''); // remove the value from the input
-                                    console.log(json); // log the returned json to the console
-                                    
-                                    $("#hist-code").empty(); // Remove data from hist-code DOM
-                                    $("#canvas-style").empty(); // Remove data from hist-code DOM
-                                    $("#show-histogram").empty(); // Remove data from hist-code DOM
-                                    
-                                    var data = json;//JSON.parse(json);
-                                    $("#hist-code").prepend(data['script']);
-                                    $("#canvas-style").prepend(data['style']);
-
-                                    eval(document.getElementById("hist-code").innerHTML);
-
-                                    console.log("success"); // another sanity check
+                <div style="width:auto;">
+                    <style>
+                        svg {
+                            display: block;
+                            margin: auto;
+                        }
+                    </style>
+                    <div id="show-timeSeries" class="center"
+                        style="width: auto; overflow-x: auto; margin-left: 10px; margin-right: 10px;"></div>
+                </div>
+                <script id="ts-code">
+                    var ts = c3.generate({
+                        bindto: '#show-timeSeries',
+                        data: {
+                            x: '{{ timeSeries|getItem:"x" }}',
+                            columns: [
+                                {% for data in timeSeries|getItem:'datas' %}[{% for dt in data %}{% if forloop.first %}'{{ dt }}'{% else %} { { dt } } {% endif %} {% if not forloop.last %}, {% endif %} {% endfor %}]{% if not forloop.last %},
+                    {% endif %} {% endfor %}
+                            ]
+                        },
+                    size: {
+                        height: 700,
+                            width: { { timeSeries|getItem:'dsize' } }
+                    },
+                    axis: {
+                        x: {
+                            tick: {
+                                rotate: 60,
+                                    culling: {
+                                    max: 300
                                 },
-
-                                // handle a non-successful response
-                                error : function(xhr,errmsg,err) {
-                                    $('#show-histogram').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                                }
-                            });
-                        };
-                    </script>
+                                multiline: false
+                            },
+                            padding: 0.01
+                        }
+                    },
+                    padding: {
+                        bottom: 20,
+                            right: 20
+                    }
+                    });
+                </script>
+            </div>
+            <div class="tab-pane fade high" id="histogram" role="tabpanel" aria-labelledby="histogram-tab"
+                style="height: 900px;">
+                <div class="border-bottom">
+                    <input id="exportHistogram" type="button" value="Export graphic as image" class="mx-4 my-2"></input>
+                    <form method="POST" action="hist-form" id="hist-form">
+                        <div class="mx-4 my-2">
+                            {% csrf_token %}
+                            {{ histForm }}
+                            <input type="submit" value="Update Graphic" class="tiny button">
+                        </div>
+                    </form>
                 </div>
-                <div class="tab-pane fade high" id="settings" role="tabpanel" aria-labelledby="settings-tab">4</div>
+                <div style="width:auto;">
+                    <style>
+                        svg {
+                            display: block;
+                            margin: auto;
+                        }
+                    </style>
+                    <div id="show-histogram" class="center" style="width: auto; overflow-x: auto;"></div>
+                </div>
+                <script id="hist-code">
+                    var chart = c3.generate({
+                        bindto: '#show-histogram',
+                        data: {
+                            columns: [
+                                {% for data in histogram|getItem:'datas' %}[{% for dt in data %}{% if forloop.first %}'{{ dt }}'{% else %} { { dt } } {% endif %} {% if not forloop.last %}, {% endif %} {% endfor %}]{% if not forloop.last %},
+                    {% endif %} {% endfor %}
+                            ],
+                    type: 'bar'
+                        },
+                    size: {
+                        height: 600,
+                            width: { { histogram|getItem:'dsize' } }
+                    },
+                    padding: {
+                        bottom: 80,
+                            right: 20
+                    },
+                    axis: {
+                        x: {
+                            type: 'category',
+                                tick: {
+                                rotate: 60,
+                                    multiline: false
+                            },
+                            categories: [{% for name in histogram|getItem:'names' %} '{{ name }}'{% if not forloop.last %}, {% endif %} {% endfor %}]
+                    }
+                        },
+                    bar: {
+                        width: {
+                            ratio: 0.7
+                        }
+                    }
+                    });
+                </script>
+                <script>
+                    // Submit post on submit
+                    $('#hist-form').on('submit', function (event) {
+                        event.preventDefault();
+                        console.log("form submitted!")  // sanity check
+                        if (parseFloat($("#id_mincutoff").val()) > parseFloat($("#id_maxcutoff").val()) && ($("#id_maxcutoff").val() != "" || $("#id_maxcutoff").val() != "")) {
+                            alert("Minimum cutoff should not be greater than Maximum cutoff and vice versa!")
+                        }
+                        else {
+                            hist_post();
+                        }
+                    });
+
+                    // AJAX for posting
+                    function hist_post() {
+                        console.log("create post is working!") // sanity check
+                        $.ajax({
+                            url: "hist_post", // the endpoint
+                            type: "POST", // http method
+                            data: { mincutoff: $('#id_mincutoff').val(), maxcutoff: $('#id_maxcutoff').val() }, // data sent with the post request
+
+                            // handle a successful response
+                            success: function (json) {
+                                //$('#min_val').val(''); // remove the value from the input
+                                //$('#max_val').val(''); // remove the value from the input
+                                console.log(json); // log the returned json to the console
+
+                                $("#hist-code").empty(); // Remove data from hist-code DOM
+                                $("#canvas-style").empty(); // Remove data from hist-code DOM
+                                $("#show-histogram").empty(); // Remove data from hist-code DOM
+
+                                var data = json;//JSON.parse(json);
+                                $("#hist-code").prepend(data['script']);
+                                $("#canvas-style").prepend(data['style']);
+
+                                eval(document.getElementById("hist-code").innerHTML);
+
+                                console.log("success"); // another sanity check
+                            },
+
+                            // handle a non-successful response
+                            error: function (xhr, errmsg, err) {
+                                $('#show-histogram').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                            }
+                        });
+                    };
+                </script>
+            </div>
+            <div class="tab-pane fade high" id="settings" role="tabpanel" aria-labelledby="settings-tab">4</div>
             </div>
         </section>
-    <footer>
-        <div class="container text-center">
-            <p>Copyright ©&nbsp;LigMol 2018</p>
-        </div>
-    </footer>
-    <script src="{% static 'complexTable/js/jquery.min.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <!-- <script src="{% static 'complexTable/js/grayscale.js' %}"></script> -->
-    <script src="{% static 'complexTable/js/particles.min.js' %}"></script>
-    <script src="{% static 'complexTable/js/ligmol.js' %}"></script>
-    <script src="{% static 'complexTable/js/custom.js' %}"></script>
+        <footer>
+            <div class="container text-center">
+                <p>Copyright ©&nbsp;LigMol 2018</p>
+            </div>
+        </footer>
+        <script src="{% static 'complexTable/js/jquery.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <!-- <script src="{% static 'complexTable/js/grayscale.js' %}"></script> -->
+        <script src="{% static 'complexTable/js/particles.min.js' %}"></script>
+        <script src="{% static 'complexTable/js/ligmol.js' %}"></script>
+        <script src="{% static 'complexTable/js/custom.js' %}"></script>
 </body>
 
 </html>

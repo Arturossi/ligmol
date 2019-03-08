@@ -1,4 +1,16 @@
 # Django imports
+import seaborn as sns
+import pandas as pd
+import tarfile
+import logging
+import base64
+import json
+import csv
+import re
+import os
+from wsgiref.util import FileWrapper
+from ast import literal_eval
+from io import BytesIO
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
@@ -9,31 +21,18 @@ from django.views.generic.edit import FormView
 
 # Models import
 from complexTable.models import Complex
-
 from complexTable.forms import *
 
 # Special python imports
 import matplotlib
 matplotlib.use('Agg')
 
-# Python imports
-from io import BytesIO
-from ast import literal_eval
-from wsgiref.util import FileWrapper
-from matplotlib import pyplot as plt
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
+# Late imports
 from matplotlib.dates import DateFormatter
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib import pyplot as plt
 
-import os
-import re
-import csv
-import json
-import base64
-import logging
-import tarfile
-import pandas as pd
-import seaborn as sns
 
 # Graphic spacing variables
 spacing = 15
@@ -43,6 +42,7 @@ tsSpacing = 5
 logger = logging.getLogger(__name__)
 
 # region Graphic filters
+
 
 def hist_post(request):
     """
@@ -77,7 +77,7 @@ def hist_post(request):
 
             # If both restrictions are imposed
             if mincutoff != None and maxcutoff != None:
-                # For each serie in dataset 
+                # For each serie in dataset
                 for index in range(1, datasLen):
                     # For each element in the serie
                     for innerIndex in range(0, sizeHist):
@@ -98,7 +98,7 @@ def hist_post(request):
                             # Flag its index to delete it (decrescent)
                             deleter.insert(0, index)
                             break
-            
+
             # If only a lower bound is imposed
             elif mincutoff != None and maxcutoff == None:
                 # For each serie in dataset
@@ -136,7 +136,7 @@ def hist_post(request):
 
             # Define a default size
             size = 0
-            
+
             # If there is any name
             if names:
                 # Set its size
@@ -154,7 +154,7 @@ def hist_post(request):
                     toPrint = toPrint + "\t\t["
 
                     # Get the length of serie
-                    datalen = len(data) -1 
+                    datalen = len(data) - 1
 
                     # For each element in serie
                     for innerIndex, info in enumerate(data):
@@ -165,12 +165,12 @@ def hist_post(request):
                         else:
                             # Its a number
                             toPrint = toPrint + str(info)
-                        
+
                         # If its not last element
                         if not innerIndex == datalen:
                             # Add a comma
                             toPrint = toPrint + ", "
-                    
+
                     # If its not the last element
                     if not index == dataslen:
                         # Close the bracket and add comma
@@ -178,10 +178,11 @@ def hist_post(request):
                     else:
                         # Jus close the bracket
                         toPrint = toPrint + "]\n\t"
-                
+
                 # Add more info to print
-                toPrint = toPrint + "\t],\n\t\ttype: 'bar'\n\t\t},\n\t\tsize: {\n\t\t\theight: 600,\n\t\t\twidth: "
-                
+                toPrint = toPrint + \
+                    "\t],\n\t\ttype: 'bar'\n\t\t},\n\t\tsize: {\n\t\t\theight: 600,\n\t\t\twidth: "
+
                 # If the size is lower than 400 (small graphic)
                 if size < 400:
                     # If is smaller than 380 (small graphic)
@@ -196,8 +197,9 @@ def hist_post(request):
                     toPrint = toPrint + str(size)
 
                 # Add more info
-                toPrint = toPrint + "\n\t\t},\n\t\tpadding: {\n\t\t\tbottom: 80,\n\t\t\tright: 20\n\t\t},\n\t\taxis: {\n\t\t\tx: {\n\t\t\t\ttype: 'category',\n\t\t\t\ttick: {\n\t\t\t\t\trotate: 60,\n\t\t\t\t\tmultiline: false\n\t\t\t\t},\n\t\t\t\tcategories: ["
-                
+                toPrint = toPrint + \
+                    "\n\t\t},\n\t\tpadding: {\n\t\t\tbottom: 80,\n\t\t\tright: 20\n\t\t},\n\t\taxis: {\n\t\t\tx: {\n\t\t\t\ttype: 'category',\n\t\t\t\ttick: {\n\t\t\t\t\trotate: 60,\n\t\t\t\t\tmultiline: false\n\t\t\t\t},\n\t\t\t\tcategories: ["
+
                 # Compute the length of names
                 nameslen = len(names) - 1
 
@@ -210,13 +212,14 @@ def hist_post(request):
                     if not index == nameslen:
                         # Add a comma
                         toPrint = toPrint + ", "
-                
+
                 # Append more info
-                toPrint = toPrint + "]\n\t\t\t}\n\t\t},\n\t\tbar: {\n\t\t\twidth: {\n\t\t\t\tratio: 0.7\n\t\t\t}\n\t\t}\n\t});\n"
+                toPrint = toPrint + \
+                    "]\n\t\t\t}\n\t\t},\n\t\tbar: {\n\t\t\twidth: {\n\t\t\t\tratio: 0.7\n\t\t\t}\n\t\t}\n\t});\n"
             else:
                 # Throw an error
                 toPrint = "alert('No results matching your filter!');"
-            
+
             # Add all the data to response_data
             response_data["script"] = toPrint
 
@@ -225,26 +228,30 @@ def hist_post(request):
                 # If its smaller than 400
                 if size < 400:
                     # Set its size to 400
-                    response_data["style"]= "\n\t.html2canvas-container\n\t{\n\t\twidth: " + str(400) + "px !important;\n\t\theight: 600px !important;\n\t}"
+                    response_data["style"] = "\n\t.html2canvas-container\n\t{\n\t\twidth: " + str(
+                        400) + "px !important;\n\t\theight: 600px !important;\n\t}"
                 else:
                     # Otherwise keep its size
-                    response_data["style"]= "\n\t.html2canvas-container\n\t{\n\t\twidth: " + str(size) + "px !important;\n\t\theight: 600px !important;\n\t}"
+                    response_data["style"] = "\n\t.html2canvas-container\n\t{\n\t\twidth: " + str(
+                        size) + "px !important;\n\t\theight: 600px !important;\n\t}"
             else:
                 # Since there is no name, there is no style to apply
-                response_data["style"]=""
+                response_data["style"] = ""
 
             # Return the http response as a json
             return HttpResponse(
                 json.dumps(response_data),
                 content_type="application/json"
             )
-            
+
     else:
         # Since is not POST, return a dummy json
         return HttpResponse(
-            json.dumps({"nothing to see": "You're not suppose to sniff this."}),
+            json.dumps(
+                {"nothing to see": "You're not suppose to sniff this."}),
             content_type="application/json"
         )
+
 
 def line2d_post(request):
     """
@@ -283,10 +290,11 @@ def line2d_post(request):
                 l2d = runningAvg(mincutoff2d, maxcutoff2d)
                 # Set the alt to the image
                 alt = '2D running average line graphic'
-            
+
             # Create the response data line2d entry
-            response_data['line2d'] = '<img src="data:image/png;base64, ' + l2d + '" id="line-img" alt="' + alt + '"/>'
-            
+            response_data['line2d'] = '<img src="data:image/png;base64, ' + \
+                l2d + '" id="line-img" alt="' + alt + '"/>'
+
             # Close all open plots (otherwise will eat all memory)
             plt.close('all')
 
@@ -298,16 +306,17 @@ def line2d_post(request):
         else:
             # Return a fail (form not valid) HttpResponse in json format
             return HttpResponse(
-            json.dumps({"Wrong": "Form not valid"}),
-            content_type="application/json"
-        )
-            
+                json.dumps({"Wrong": "Form not valid"}),
+                content_type="application/json"
+            )
+
     else:
         # Return a fail (No post) HttpResponse in json format
         return HttpResponse(
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+
 
 def heat2d_post(request):
     """
@@ -329,8 +338,9 @@ def heat2d_post(request):
             response_data = {}
 
             # Add the heat2d data as a complete img tag
-            response_data['heat2d'] = '<img src="data:image/png;base64, ' + heatMap(mincutoffheat2d, maxcutoffheat2d) + '" id="heat-img" alt="2D map heatmap"/>'
-            
+            response_data['heat2d'] = '<img src="data:image/png;base64, ' + heatMap(
+                mincutoffheat2d, maxcutoffheat2d) + '" id="heat-img" alt="2D map heatmap"/>'
+
             # Close all open plots (otherwise will eat all memory)
             plt.close('all')
 
@@ -339,20 +349,21 @@ def heat2d_post(request):
                 json.dumps(response_data),
                 content_type="application/json"
             )
-        
+
         else:
             # Return a fail (form not valid) HttpResponse in json format
             return HttpResponse(
-            json.dumps({"Wrong": "Form not valid"}),
-            content_type="application/json"
-        )
-            
+                json.dumps({"Wrong": "Form not valid"}),
+                content_type="application/json"
+            )
+
     else:
         # Return a fail (No post) HttpResponse in json format
         return HttpResponse(
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+
 
 def distrib2d_post(request):
     """
@@ -373,7 +384,7 @@ def distrib2d_post(request):
 
             # Create response dictionary
             response_data = {}
-            
+
             # alt attribute
             alt = ''
             # src attribute
@@ -392,7 +403,7 @@ def distrib2d_post(request):
                 l2d = distribBox(mincutoff2d, maxcutoff2d)
                 # Set the alt atribute
                 alt = '2D map distribuition graphic box style'
-            
+
             # User has choosen Violin type
             else:
                 # Get base64 string of distribViolin
@@ -402,9 +413,10 @@ def distrib2d_post(request):
 
             # Close all open plots (otherwise will eat all memory)
             plt.close('all')
-            
+
             # Add the distrib2d data as a complete img tag
-            response_data['distrib2d'] = '<img src="data:image/png;base64, ' + l2d + '" id="distrib-img" alt="' + alt + '"/>'
+            response_data['distrib2d'] = '<img src="data:image/png;base64, ' + \
+                l2d + '" id="distrib-img" alt="' + alt + '"/>'
 
             # Return a success HttpResponse in json format
             return HttpResponse(
@@ -414,16 +426,17 @@ def distrib2d_post(request):
         else:
             # Return a fail (form not valid) HttpResponse in json format
             return HttpResponse(
-            json.dumps({"Wrong": "Form not valid"}),
-            content_type="application/json"
-        )
-            
+                json.dumps({"Wrong": "Form not valid"}),
+                content_type="application/json"
+            )
+
     else:
         # Return a fail (No post) HttpResponse in json format
         return HttpResponse(
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+
 
 def facet2d_post(request):
     """
@@ -444,7 +457,7 @@ def facet2d_post(request):
 
             # Create response dictionary
             response_data = {}
-            
+
             # alt attribute
             alt = ''
             # src attribute
@@ -482,7 +495,8 @@ def facet2d_post(request):
             plt.close('all')
 
             # Add the facet2d data as a complete img tag
-            response_data['facet2d'] = '<img src="data:image/png;base64, ' + l2d + '" id="facet-img" alt="' + alt + '"/>'
+            response_data['facet2d'] = '<img src="data:image/png;base64, ' + \
+                l2d + '" id="facet-img" alt="' + alt + '"/>'
 
             # Return a success HttpResponse in json format
             return HttpResponse(
@@ -492,10 +506,10 @@ def facet2d_post(request):
         else:
             # Return a fail (form not valid) HttpResponse in json format
             return HttpResponse(
-            json.dumps({"Wrong": "Form not valid"}),
-            content_type="application/json"
-        )
-            
+                json.dumps({"Wrong": "Form not valid"}),
+                content_type="application/json"
+            )
+
     else:
         # Return a fail (No post) HttpResponse in json format
         return HttpResponse(
@@ -506,6 +520,7 @@ def facet2d_post(request):
 # endregion
 
 # region Parse files
+
 
 def parseTimeseries():
     """
@@ -528,7 +543,7 @@ def parseTimeseries():
 
         # Delete the line
         del info[-1]
-    
+
     # Lists to hold names and datas
     names = []
     datas = []
@@ -538,7 +553,7 @@ def parseTimeseries():
         # If is the first index
         if index == 0:
             # Its a name
-            names = line#list(filter(None, re.split(',| |\t|\n', line)))
+            names = line  # list(filter(None, re.split(',| |\t|\n', line)))
         else:
             # Otherwise is data
             datas.append(line)
@@ -557,17 +572,18 @@ def parseTimeseries():
     # Return a dictionary with all gathered info
     return {"names": names, "x": names[0], "datas": datas, "dsize": datasize}
 
+
 def parseHistogram():
     """
     Parse the histogram.dat file
     """
-    
+
     # Create the path string
     path = os.path.join(settings.FILES_DIR, 'dats/histogram.dat')
 
     # Open file
     info = readfile(path)
-    
+
     # Lists to hold names and datas
     names = []
     datas = []
@@ -576,16 +592,16 @@ def parseHistogram():
     for line in info:
         # The First 2 positions of list are the name
         names.append(str(line[0]) + " " + str(line[1]))
-        
+
         # The last 2 are datas
         datas.append([line[2], line[3]])
-    
+
     # Transpose the list
     datas = list(map(list, zip(*datas)))
 
     # Get datas size
     datasize = len(datas[0]) * spacing
-    
+
     # If size is lower than 400
     if datasize < 400:
         # If the size is lower than 380
@@ -601,10 +617,11 @@ def parseHistogram():
 
     # Add name on the top of every line of data
     for index, line in enumerate(datas):
-        line.insert(0, "Data "+ str(index))
+        line.insert(0, "Data " + str(index))
 
     # Return a dictionary with all gathered info
     return {"names": names, "datas": datas, "dsize": datasize}
+
 
 def parseCSV():
     """
@@ -641,7 +658,7 @@ def parseCSV():
                     localData[key.lower()] = tryToRound(value, 2)
                 except:
                     localData[key] = tryToRound(value, 2)
-                        
+
         # Add the local data to data info
         dataInfo[str(idx)] = localData
 
@@ -654,6 +671,7 @@ def parseCSV():
     # Return the tuple
     return (dataInfo, keys)
 
+
 def parse2Dmap(mincutoff2d, maxcutoff2d):
     """
     Read 2D_map.dat and return its contents
@@ -663,18 +681,19 @@ def parse2Dmap(mincutoff2d, maxcutoff2d):
     path = os.path.join(settings.FILES_DIR, 'dats/2D_map.dat')
 
     # Read csv
-    df = pd.read_csv(path, delim_whitespace=True, header=None).drop([0], axis=1)
+    df = pd.read_csv(path, delim_whitespace=True,
+                     header=None).drop([0], axis=1)
 
     # If there is min and max cutoff
     if mincutoff2d != None and maxcutoff2d != None:
         # Make it
         df = df[(df > mincutoff2d) & (df < maxcutoff2d)].dropna(axis='columns')
-    
+
     # If there is just a max cutoff
     elif mincutoff2d == None and maxcutoff2d != None:
         # Make it
         df = df[(df < maxcutoff2d)].dropna(axis='columns')
-    
+
     # If there is just a min cutoff
     elif mincutoff2d != None and maxcutoff2d == None:
         # Make it
@@ -687,6 +706,7 @@ def parse2Dmap(mincutoff2d, maxcutoff2d):
 
 # region 2dGraphic generating functions
 
+
 def simplePlot(mincutoff2d, maxcutoff2d):
     """
     Return a base64 string of a simple plot image
@@ -696,25 +716,27 @@ def simplePlot(mincutoff2d, maxcutoff2d):
     df = parse2Dmap(mincutoff2d, maxcutoff2d)
 
     # Plot it
-    df.plot(figsize=(10,5))
+    df.plot(figsize=(10, 5))
 
     # Set legend position
     plt.legend(loc='upper right')
-    
+
     # Create a buffer
     fig_buffer = BytesIO()
 
     # Save the image as png
     plt.savefig(fig_buffer, format='png')
-    
+
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
 
     # Return string
     return image_base64
+
 
 def runningAvg(mincutoff, maxcutoff):
     """
@@ -725,7 +747,7 @@ def runningAvg(mincutoff, maxcutoff):
     df = parse2Dmap(mincutoff, maxcutoff)
 
     # Perform a "running average" for each 100 steps.
-    df.rolling(window=100).mean().plot(figsize=(10,5))
+    df.rolling(window=100).mean().plot(figsize=(10, 5))
 
     # Set legend position
     plt.legend(loc='upper right')
@@ -737,13 +759,15 @@ def runningAvg(mincutoff, maxcutoff):
     plt.savefig(fig_buffer, format='png', dpi=150)
 
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
 
     # Return string
     return image_base64
+
 
 def heatMap(mincutoff, maxcutoff):
     """
@@ -754,7 +778,7 @@ def heatMap(mincutoff, maxcutoff):
     df = parse2Dmap(mincutoff, maxcutoff)
 
     # Set fig size
-    plt.figure(figsize = (15,5))
+    plt.figure(figsize=(15, 5))
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
     sns.heatmap(df.transpose(), cmap="viridis")
@@ -766,13 +790,15 @@ def heatMap(mincutoff, maxcutoff):
     plt.savefig(fig_buffer, format='png', dpi=150)
 
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
 
     # Return string
     return image_base64
+
 
 def distribStrip(mincutoff, maxcutoff):
     """
@@ -783,11 +809,12 @@ def distribStrip(mincutoff, maxcutoff):
     df = parse2Dmap(mincutoff, maxcutoff)
 
     # Set fig size
-    plt.figure(figsize = (15,5))
+    plt.figure(figsize=(15, 5))
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
-    sns.catplot(data=df.melt(), x='variable', y='value', kind='strip', aspect=2)
-    
+    sns.catplot(data=df.melt(), x='variable',
+                y='value', kind='strip', aspect=2)
+
     # Create a buffer
     fig_buffer = BytesIO()
 
@@ -795,13 +822,15 @@ def distribStrip(mincutoff, maxcutoff):
     plt.savefig(fig_buffer, format='png', dpi=150)
 
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
 
     # Return string
     return image_base64
+
 
 def distribBox(mincutoff, maxcutoff):
     """
@@ -812,25 +841,27 @@ def distribBox(mincutoff, maxcutoff):
     df = parse2Dmap(mincutoff, maxcutoff)
 
     # Set fig size
-    plt.figure(figsize = (15,5))
+    plt.figure(figsize=(15, 5))
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
     sns.catplot(data=df.melt(), x='variable', y='value', kind='box', aspect=2)
-    
+
     # Create a buffer
     fig_buffer = BytesIO()
-    
+
     # Save the image as png
     plt.savefig(fig_buffer, format='png', dpi=150)
 
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
 
     # Return string
     return image_base64
+
 
 def distribViolin(mincutoff, maxcutoff):
     """
@@ -841,10 +872,11 @@ def distribViolin(mincutoff, maxcutoff):
     df = parse2Dmap(mincutoff, maxcutoff)
 
     # Set fig size
-    plt.figure(figsize = (15,5))
+    plt.figure(figsize=(15, 5))
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
-    sns.catplot(data=df.melt(), x='variable', y='value', kind='violin', aspect=2)
+    sns.catplot(data=df.melt(), x='variable',
+                y='value', kind='violin', aspect=2)
 
     # Create a buffer
     fig_buffer = BytesIO()
@@ -853,13 +885,15 @@ def distribViolin(mincutoff, maxcutoff):
     plt.savefig(fig_buffer, format='png', dpi=150)
 
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
 
     # Return string
     return image_base64
+
 
 def facetGrids(mincutoff, maxcutoff):
     """
@@ -875,8 +909,8 @@ def facetGrids(mincutoff, maxcutoff):
     # sharey = compartilhar o eixo Y.
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
-    g=sns.FacetGrid(data=df.melt(),col='variable',col_wrap=3,sharey=False)
-    g.map(plt.plot,'value')
+    g = sns.FacetGrid(data=df.melt(), col='variable', col_wrap=3, sharey=False)
+    g.map(plt.plot, 'value')
 
     # Create a buffer
     fig_buffer = BytesIO()
@@ -885,19 +919,21 @@ def facetGrids(mincutoff, maxcutoff):
     plt.savefig(fig_buffer, format='png', dpi=150)
 
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
 
     # Return string
     return image_base64
+
 
 def facetGridsRolling(mincutoff, maxcutoff):
     """
     Return a base64 string of a facet grid rolling plot image
     """
-    
+
     # Get the data frame
     df = parse2Dmap(mincutoff, maxcutoff)
 
@@ -907,8 +943,9 @@ def facetGridsRolling(mincutoff, maxcutoff):
     # sharey = compartilhar o eixo Y.
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
-    g=sns.FacetGrid(data=df.rolling(window=100).mean().melt(),col='variable',col_wrap=3,sharey=False)
-    g.map(plt.plot,'value')
+    g = sns.FacetGrid(data=df.rolling(window=100).mean().melt(),
+                      col='variable', col_wrap=3, sharey=False)
+    g.map(plt.plot, 'value')
 
     # Create a buffer
     fig_buffer = BytesIO()
@@ -917,19 +954,21 @@ def facetGridsRolling(mincutoff, maxcutoff):
     plt.savefig(fig_buffer, format='png', dpi=150)
 
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
 
     # Return string
     return image_base64
+
 
 def facetGridsDistPlot(mincutoff, maxcutoff):
     """
     Return a base64 string of a facet grid dist plot image
     """
-    
+
     # Get the data frame
     df = parse2Dmap(mincutoff, maxcutoff)
 
@@ -939,8 +978,8 @@ def facetGridsDistPlot(mincutoff, maxcutoff):
     # sharey = compartilhar o eixo Y.
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
-    g=sns.FacetGrid(data=df.melt(),hue='variable',aspect=4)
-    g.map(sns.distplot,'value',hist=False)
+    g = sns.FacetGrid(data=df.melt(), hue='variable', aspect=4)
+    g.map(sns.distplot, 'value', hist=False)
 
     # Create a buffer
     fig_buffer = BytesIO()
@@ -949,7 +988,8 @@ def facetGridsDistPlot(mincutoff, maxcutoff):
     plt.savefig(fig_buffer, format='png', dpi=150)
 
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
@@ -957,11 +997,12 @@ def facetGridsDistPlot(mincutoff, maxcutoff):
     # Return string
     return image_base64
 
+
 def facetGridsSeparate(mincutoff, maxcutoff):
     """
     Return a base64 string of a facet grid separate plot image
     """
-    
+
     # Get the data frame
     df = parse2Dmap(mincutoff, maxcutoff)
 
@@ -971,8 +1012,9 @@ def facetGridsSeparate(mincutoff, maxcutoff):
     # sharey = compartilhar o eixo Y.
 
     # Plot as a heatmap. ( não sei arrumar os xticks )
-    g=sns.FacetGrid(data=df.melt(),col='variable',col_wrap=3,hue='variable',aspect=1)
-    g.map(sns.distplot,'value',hist=False)
+    g = sns.FacetGrid(data=df.melt(), col='variable',
+                      col_wrap=3, hue='variable', aspect=1)
+    g.map(sns.distplot, 'value', hist=False)
 
     # Create a buffer
     fig_buffer = BytesIO()
@@ -981,7 +1023,8 @@ def facetGridsSeparate(mincutoff, maxcutoff):
     plt.savefig(fig_buffer, format='png', dpi=150)
 
     # Convert image to base64
-    image_base64 = base64.b64encode(fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
+    image_base64 = base64.b64encode(
+        fig_buffer.getvalue()).decode('utf-8').replace('\n', '')
 
     # Close the buffer
     fig_buffer.close()
@@ -992,6 +1035,7 @@ def facetGridsSeparate(mincutoff, maxcutoff):
 # endregion
 
 # region Auxiliar functions
+
 
 def build_nested_helper(path, text, container):
     """
@@ -1016,9 +1060,10 @@ def build_nested_helper(path, text, container):
         if head not in container:
             # Add it as a new dict
             container[head] = {}
-        
+
         # Call the function recursively
         build_nested_helper('/'.join(tail), text, container[head])
+
 
 def build_nested(paths):
     """
@@ -1032,16 +1077,17 @@ def build_nested(paths):
     for path in paths:
         # Build its tree (container is passed by reference)
         build_nested_helper(path, path, container)
-    
+
     # Return the tree
     return container
+
 
 def getListOfFilesHelper(dirName):
     '''
     For the given path, get the List of all files in the directory tree 
     '''
 
-    # create a list of file and sub directories names in the given directory 
+    # create a list of file and sub directories names in the given directory
     listOfFile = os.listdir(dirName)
     allFiles = list()
 
@@ -1050,15 +1096,16 @@ def getListOfFilesHelper(dirName):
         # Create full path
         fullPath = os.path.join(dirName, entry)
 
-        # If entry is a directory then get the list of files in this directory 
+        # If entry is a directory then get the list of files in this directory
         if os.path.isdir(fullPath):
             allFiles = allFiles + getListOfFilesHelper(fullPath)
         else:
             # Otherwise add the path
             allFiles.append(fullPath)
-    
+
     # Return the list of files paths
     return allFiles
+
 
 def getListOfFiles(dirName):
     """
@@ -1076,6 +1123,7 @@ def getListOfFiles(dirName):
 
     # Return parsed data
     return build_nested(allFiles)
+
 
 def readfile(path):
     """
@@ -1114,8 +1162,9 @@ def readfile(path):
                         parsedLine.append(data)
             # Add the line to list of lines
             info.append(parsedLine)
-            
+
     return info
+
 
 def isHex(s):
     """
@@ -1131,6 +1180,7 @@ def isHex(s):
         # If fails, its not a number
         return False
 
+
 def tryToRound(val, elems):
     """
     Try to round the passed value if is float, otherwise return the value itself.
@@ -1140,7 +1190,7 @@ def tryToRound(val, elems):
     try:
         # Evaluate the value
         value = literal_eval(val)
-        
+
         # If is flagged as integer
         if isinstance(value, int):
             # Return the value, since its impossible to rount an integer
@@ -1155,7 +1205,8 @@ def tryToRound(val, elems):
 
 # endregion
 
-# region Download 
+# region Download
+
 
 def downloadPOST(request):
     """
@@ -1178,7 +1229,7 @@ def downloadPOST(request):
 
         # create a form instance and populate it with data from the request:
         form = FilesSubfiles(request.POST)
-        
+
         # check whether it's valid:
         if form.is_valid():
             # Read which choices were made
@@ -1200,35 +1251,37 @@ def downloadPOST(request):
             for id in ids:
                 dataid = id.split('-')
                 logger.warn(id)
-                
+
                 # If is a file (other checkboxes are purely functional, no neede data over there)
                 if dataid[0] == 'lv3':
                     innerdataid = '-'.join(dataid[1:]).replace('+._.+', '/')
 
                     # Create the path
-                    path = os.path.join(settings.FILES_DIR, ''.join(['summary/', data[0][lineId]['complex'].upper(), '/', innerdataid]))
+                    path = os.path.join(settings.FILES_DIR, ''.join(
+                        ['summary/', data[0][lineId]['complex'].upper(), '/', innerdataid]))
 
                     # If path has not been added to tar yet
                     if path not in paths:
                         # Add it
-                        tar.add(path, arcname=''.join([data[0][lineId]['complex'].upper(), '/', innerdataid]))
-                    
+                        tar.add(path, arcname=''.join(
+                            [data[0][lineId]['complex'].upper(), '/', innerdataid]))
+
                     # Add the path to paths set
                     paths.add(path)
-            
+
             logger.warn(paths)
             # Close the tar
             tar.close()
 
             # Return the response
             return response
-        
+
     # Parse histogram
     histogram = parseHistogram()
 
     # Parse time series
     timeSeries = parseTimeseries()
-    
+
     # Parametrize min and max values
     minlimit = 0
     maxlimit = None
@@ -1239,7 +1292,8 @@ def downloadPOST(request):
     distrib = distribStrip(minlimit, maxlimit)
     facet = facetGrids(minlimit, maxlimit)
 
-    path = os.path.join(settings.FILES_DIR, ''.join(['summary/', data[0][lineId]['complex'].upper(), '/']))
+    path = os.path.join(settings.FILES_DIR, ''.join(
+        ['summary/', data[0][lineId]['complex'].upper(), '/']))
     fileTree = getListOfFiles(path)
     # logger.warn((', '.join("{fname} {lname}".format_map(p) for p in a)))
 
@@ -1261,10 +1315,11 @@ def downloadPOST(request):
         'heatmap': heatmap,
         'distrib': distrib,
         'facet': facet
-        }
-    
+    }
+
     # Render it
     return render(request, 'complexTable/detailedInfo.html', variables)
+
 
 def download(request):
     """
@@ -1272,11 +1327,13 @@ def download(request):
     """
 
     # Create file path
-    file_path = os.path.join(settings.FILES_DIR, 'summary/BCD-ACA/resp/complex/complex.prmtop')
+    file_path = os.path.join(
+        settings.FILES_DIR, 'summary/BCD-ACA/resp/complex/complex.prmtop')
 
     # Call download function
     downloadFile(file_path)
-    
+
+
 def downloadFile(path):
     """
     Download a file trough http procotol from given path
@@ -1287,16 +1344,19 @@ def downloadFile(path):
         # Open it
         with open(path, 'rb') as fh:
             # Create a respose objects with the file being an application/octet-stream
-            response = HttpResponse(fh.read(), content_type="application/octet-stream")
+            response = HttpResponse(
+                fh.read(), content_type="application/octet-stream")
 
             # Add content to it (the file)
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(path)
+            response['Content-Disposition'] = 'inline; filename=' + \
+                os.path.basename(path)
 
             # Return it
             return response
-            
+
     # If file has not been found, throw a 404
     raise Http404("File not Found")
+
 
 def downloadFiles(request):
     """
@@ -1335,16 +1395,17 @@ def downloadFiles(request):
                 # If data is in the list
                 if not isinstance(data[0][id], list):
                     # Add its path
-                    path = os.path.join(settings.FILES_DIR, ''.join(['summary/', data[0][id]['complex'].upper(), '/']))
+                    path = os.path.join(settings.FILES_DIR, ''.join(
+                        ['summary/', data[0][id]['complex'].upper(), '/']))
 
                     # If path has not been added to tar yet
                     if path not in paths:
                         # Add it
                         tar.add(path, arcname=data[0][id]['complex'].upper())
-                    
+
                     # Add the path to paths set
                     paths.add(path)
-                        
+
             # Close the tar
             tar.close()
 
@@ -1356,14 +1417,15 @@ def downloadFiles(request):
         "checkForm": CheckForm,
         'table': data[0],
         'keys': data[1]
-        }
+    }
 
     # Return the response
     return render(request, 'complexTable/complexTable.html', variables)
 
-#endregion
+# endregion
 
 # region Filters
+
 
 @register.filter
 def get_type(value):
@@ -1371,6 +1433,7 @@ def get_type(value):
     Return the type of a given value
     """
     return type(value)
+
 
 @register.filter
 def getItem(dictionary, key):
@@ -1380,6 +1443,7 @@ def getItem(dictionary, key):
     return dictionary.get(key)
 
 # endregion
+
 
 class IndexView(generic.ListView):
     """
@@ -1392,7 +1456,8 @@ class IndexView(generic.ListView):
         """
 
         # Render page index.html within the request and variables
-        return render(request, 'complexTable/index.html') 
+        return render(request, 'complexTable/index.html')
+
 
 class ComplexView(generic.ListView):
     """
@@ -1403,7 +1468,7 @@ class ComplexView(generic.ListView):
         """
         Get function to the class
         """
-        
+
         # Parse the .csv
         data = parseCSV()
 
@@ -1412,10 +1477,11 @@ class ComplexView(generic.ListView):
             "checkForm": CheckForm,
             'table': data[0],
             'keys': data[1]
-            }
+        }
 
         # Render page complexTable.html within the request and variables
         return render(request, 'complexTable/complexTable.html', variables)
+
 
 class DetailedView(generic.ListView):
     """
@@ -1438,7 +1504,7 @@ class DetailedView(generic.ListView):
 
         # Parse time series
         timeSeries = parseTimeseries()
-        
+
         # Parametrize min and max values
         minlimit = 0
         maxlimit = None
@@ -1449,7 +1515,8 @@ class DetailedView(generic.ListView):
         distrib = distribStrip(minlimit, maxlimit)
         facet = facetGrids(minlimit, maxlimit)
 
-        path = os.path.join(settings.FILES_DIR, ''.join(['summary/', data[0][lineId]['complex'].upper(), '/']))
+        path = os.path.join(settings.FILES_DIR, ''.join(
+            ['summary/', data[0][lineId]['complex'].upper(), '/']))
         fileTree = getListOfFiles(path)
         # logger.warn((', '.join("{fname} {lname}".format_map(p) for p in a)))
 
@@ -1471,7 +1538,7 @@ class DetailedView(generic.ListView):
             'heatmap': heatmap,
             'distrib': distrib,
             'facet': facet
-            }
-        
+        }
+
         # Render it
         return render(request, 'complexTable/detailedInfo.html', variables)
