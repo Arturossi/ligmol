@@ -7,12 +7,6 @@ $(document).ready(function(){
     });
   });
 
-
-// function showMeDetails(x, id) {
-//   alert("ID is: " + id);
-//   document.getElementById("formCompound").submit();
-// }
-
 $(function() {
   // This function gets cookie with a given name
   function getCookie(name) {
@@ -98,7 +92,7 @@ $('input[name=choices]').change(function(){
 // For detailed info
 
 //select all checkboxes
-$("#choicesID").change(function(){  //"select all" change 
+$("#choicesIDdi").change(function(){  //"select all" change 
     $("input[name=choices]").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
 });
 

@@ -651,7 +651,7 @@ def parseCSV():
             # If has no key
             elif key == "":
                 # Put it on "ID" field
-                localData["ID"] = tryToRound(value, 2)
+                localData["??????"] = tryToRound(value, 2)
             else:
                 # Try to lower the key
                 try:
@@ -664,9 +664,6 @@ def parseCSV():
 
     # Get all keys
     keys = reader.fieldnames
-
-    # Sday that the key with no index is the ID
-    keys[keys.index("")] = "ID"
 
     # Return the tuple
     return (dataInfo, keys)

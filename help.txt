@@ -1,0 +1,97 @@
+usage: conda create [-h] [-y] [--dry-run] [-f] [--file FILE] [--no-deps]
+                    [--only-deps] [-m] [-C] [--use-local] [--offline]
+                    [--no-pin] [-c CHANNEL] [--override-channels]
+                    [-n ENVIRONMENT | -p PATH] [-q] [--copy] [-k]
+                    [--update-dependencies] [--no-update-dependencies]
+                    [--channel-priority] [--no-channel-priority] [--clobber]
+                    [--show-channel-urls] [--no-show-channel-urls]
+                    [--download-only] [--json] [--debug] [--verbose]
+                    [--clone ENV] [--no-default-packages]
+                    [package_spec [package_spec ...]]
+
+Create a new conda environment from a list of specified packages. To use the created environment, use 'source activate envname' look in that directory first.  This command requires either the -n NAME or -p PREFIX option.
+
+Options:
+
+positional arguments:
+  package_spec          Packages to install or update in the conda
+                        environment.
+
+optional arguments:
+  -h, --help            Show this help message and exit.
+  -y, --yes             Do not ask for confirmation.
+  --dry-run             Only display what would have been done.
+  -f, --force           Force install (even when package already installed).
+  --file FILE           Read package versions from the given file. Repeated
+                        file specifications can be passed (e.g. --file=file1
+                        --file=file2).
+  --no-deps             Do not install, update, remove, or change
+                        dependencies. This WILL lead to broken environments
+                        and inconsistent behavior. Use at your own risk.
+  --only-deps           Only install dependencies.
+  -m, --mkdir           Create the environment directory if necessary.
+  -C, --use-index-cache
+                        Use cache of channel index files, even if it has
+                        expired.
+  --use-local           Use locally built packages.
+  --offline             Offline mode, don't connect to the Internet.
+  --no-pin              Ignore pinned file.
+  -c CHANNEL, --channel CHANNEL
+                        Additional channel to search for packages. These are
+                        URLs searched in the order they are given (including
+                        file:// for local directories). Then, the defaults or
+                        channels from .condarc are searched (unless
+                        --override-channels is given). You can use 'defaults'
+                        to get the default packages for conda, and 'system' to
+                        get the system packages, which also takes .condarc
+                        into account. You can also use any name and the
+                        .condarc channel_alias value will be prepended. The
+                        default channel_alias is http://conda.anaconda.org/.
+  --override-channels   Do not search default or .condarc channels. Requires
+                        --channel.
+  -n ENVIRONMENT, --name ENVIRONMENT
+                        Name of environment.
+  -p PATH, --prefix PATH
+                        Full path to environment prefix.
+  -q, --quiet           Do not display progress bar.
+  --copy                Install all packages using copies instead of hard- or
+                        soft-linking.
+  -k, --insecure        Allow conda to perform "insecure" SSL connections and
+                        transfers. Equivalent to setting 'ssl_verify' to
+                        'false'.
+  --update-dependencies, --update-deps
+                        Update dependencies. Overrides the value given by
+                        `conda config --show update_deps`.
+  --no-update-dependencies, --no-update-deps
+                        Don't update dependencies. Overrides the value given
+                        by `conda config --show update_deps`.
+  --channel-priority, --channel-pri, --chan-pri
+                        Channel priority takes precedence over package
+                        version. Overrides the value given by `conda config
+                        --show channel_priority`.
+  --no-channel-priority, --no-channel-pri, --no-chan-pri
+                        Package version takes precedence over channel
+                        priority. Overrides the value given by `conda config
+                        --show channel_priority`.
+  --clobber             Allow clobbering of overlapping file paths within
+                        packages, and suppress related warnings.
+  --show-channel-urls   Show channel urls. Overrides the value given by `conda
+                        config --show show_channel_urls`.
+  --no-show-channel-urls
+                        Don't show channel urls. Overrides the value given by
+                        `conda config --show show_channel_urls`.
+  --download-only       Solve an environment and ensure package caches are
+                        populated, but exit prior to unlinking and linking
+                        packages into the prefix.
+  --json                Report all output as json. Suitable for using conda
+                        programmatically.
+  --debug               Show debug output.
+  --verbose, -v         Use once for info, twice for debug, three times for
+                        trace.
+  --clone ENV           Path to (or name of) existing local environment.
+  --no-default-packages
+                        Ignore create_default_packages in the .condarc file.
+
+Examples:
+
+    conda create -n myenv sqlite

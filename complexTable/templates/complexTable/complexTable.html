@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'complexTable/custom.css' %}">
     <script src="{% static 'complexTable/js/sorttable.js' %}"></script>
-    <!-- <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/> -->
 </head>
 
 <body id="page-top">
@@ -29,7 +28,7 @@
             </div>
         </div>
     </nav>
-    <section id="complexTable" > <!--class="upbackimgtb3">  style="background-image: url('{% static "complexTable/img/table3.png"%}')";> -->
+    <section id="complexTable" >
         <div style='margin-top:90;'></div>
         <br/>
         <div class="container">
@@ -45,9 +44,11 @@
                     <table id='compoundTable' class="table table-striped table-hover container-fluid sortable" valign="center" style="width:65%; height:70%; text-align:center;">
                         <thead>
                             <tr>
-                                <th scope="col" valign="center"><input valign="center" style="margin-left: 12px;" type="checkbox" name="checkAll" id="select_all" onClick="toggle(this)"></th>
+                                <th scope="col" valign="center"><input valign="center" style="margin-left: 12px;" type="checkbox" name="checkAll" id="select_all" onClick=""></th>
                                 {% for key in keys %}
-                                <th scope="col"valign="center" >{% if key == '' %} # {% else %}{{ key }}{% endif %}</th>
+                                <!-- <th scope="col"valign="center" >{% if key == '' %} # {% else %}{{ key }}{% endif %}</th> -->
+                                <th scope="col"valign="center" >{{ key }}</th>
+
                                 {% endfor %}
                             </tr>
                         </thead>
@@ -78,7 +79,6 @@
             </div>
         </div>
         <div style="display: inline-block; top: 250px; right: 100px; position: fixed; padding-top: 80px;">
-            <!-- <input value="Download checked items" type="button" onclick="window.open('download?id={{ bigID }}')" class="btn"></input> -->
             <input value="Download checked items" type="submit" form='downForm' class="btn" />
         </div>
     </section>
@@ -91,10 +91,6 @@
     <script src="{% static 'complexTable/js/jquery.min.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
     <script src="{% static 'complexTable/js/grayscale.js' %}"></script>
-    <script src="{% static 'complexTable/js/particles.min.js' %}"></script>
     <script src="{% static 'complexTable/js/ligmol.js' %}"></script>
-    <!-- <script src=”https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
-    <script src=”https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script> -->
 </body>
-
 </html>
