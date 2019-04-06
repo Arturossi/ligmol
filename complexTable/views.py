@@ -1485,6 +1485,20 @@ def get_item_max(dictionary, key):
     """
     return tryToRound(max(convertDict(dictionary).get(key.lower())), 2)
     
+@register.filter
+def toLower(string):
+    """
+    Return the maximum value of dict[key] (dict of dicts)
+    """
+    return string.lower()
+
+@register.filter
+def toUpper(string):
+    """
+    Return the maximum value of dict[key] (dict of dicts)
+    """
+    return string.upper()
+
 # endregion
 
 

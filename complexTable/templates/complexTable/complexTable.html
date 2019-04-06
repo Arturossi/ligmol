@@ -109,15 +109,20 @@
                             <script>
                                 $(".js-range-slider").ionRangeSlider({
                                     type: "double",
+                                    skin: "square",
+                                    step: 0.01,
                                     min: {{ table|get_item_min:key }},
                                     max: {{ table|get_item_max:key }},
                                     from: {{ table|get_item_min:key }},
                                     to: {{ table|get_item_max:key }},
-                                    grid: true
+                                    grid: true,
+                                    decorate_both: true,
+                                    values_separator: " to ",
+                                    drag_interval: true
                                 });
                             </script>
                         {% else %}
-                        <input class="form-control" id="tableSearch" type="text" placeholder="Search in {{ key }} column...">
+                        <input class="form-control" id="tableSearch" type="text" placeholder="Search in {{ key|toLower }} column...">
                         {% endif %}
                         {% if not forloop.last %}
                             <br/>
