@@ -51,7 +51,7 @@
         <div class="row">
             <div style='margin-top:90;'></div>
         </div>
-        <br/>
+        <br />
         <div class="row">
             <div class="container">
                 <h2>Compounds</h2>
@@ -62,7 +62,9 @@
         <br />
         <div class="row">
             <div class="col-sm-2 center">
-                <input value="Download checked items" type="submit" form='downForm' class="btn" />
+                <div class="sticky-top" style="top: 130px;">
+                    <input value="Download checked items" type="submit" form='downForm' class="btn" />
+                </div>
             </div>
             <div class="col-md-6">
                 <div class="table-responsive">
@@ -78,12 +80,13 @@
                                 </tr>
                             </thead>
                             <tbody id='compoundBody'>
-                                {% for bigID, orderDict in table.items %}<tr class='limitedHeight' onclick="showMeDetails({{ bigID }})">
+                                {% for bigID, orderDict in table.items %}<tr class='limitedHeight'
+                                    onclick="showMeDetails({{ bigID }})">
                                     <td class='center' valign="center"'>
                                         <input valign="center" class="form-check-input" style="margin-left: 0px;" type="checkbox" name="choices" id="choicesID" value="{{ bigID }}">
                                     </td>
                                     {% for key, val in orderDict.items %}
-                                    <td class="clickable" style="cursor: pointer"; valign="center">{{ val }}</td>
+                                    <td class="clickable {{ key }}col" style="cursor: pointer"; valign="center">{{ val }}</td>
                                     {% endfor %}
                                 </tr>{% endfor %}
                             </tbody>
@@ -101,6 +104,7 @@
                 </div>
             </div>
             <div class="col-3 center">
+                    <div class="sticky-top" style="top: 130px;">
                 <div class="container">
                     {% with 'GBMODEL INTDIEL SALTCOM MMGBSA NMA DELTA exp' as numList %}
                         {% for key in keys %}
@@ -110,11 +114,9 @@
                                 <div class="row">
                                     <div class="col">
                             {% endif %}
-                            
-                            
                             {{ key }}
                             {% if key in numList.split %}
-                                <input type="text" class="js-range-slider" name="my_range" value="" />
+                                <input id="{{ key|toLower }}filter" type="text" class="js-range-slider personalFilter" value="" />
                                 <script>
                                     $(".js-range-slider").ionRangeSlider({
                                         type: "double",
@@ -131,7 +133,7 @@
                                     });
                                 </script>
                             {% else %}
-                            <input class="form-control" id="tableSearch" type="text" placeholder="Search in {{ key|toLower }} column...">
+                            <input class="form-control personalFilter" id="{{ key|toLower }}filter" type="text" placeholder="Search in {{ key|toLower }} column...">
                             {% endif %}
                             {% if forloop.counter|divisibleby:2%}
                                 </div>
@@ -145,6 +147,7 @@
                         {% endfor %}
                     {% endwith %}
                 </div>
+            </div>
             </div>
             <div class="col-1"></div>
         </div>

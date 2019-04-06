@@ -10,30 +10,67 @@ $(document).ready(function(){
 
 
 /* Table filter 2 */
-// $(document).ready(function() {
-//     // Setup - add a text input to each footer cell
-//     $('#compoundTable thead th').each( function () {
-//         var title = $(this).text();
-//         $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
-//     } );
+$(document).ready(function() {
+    $(".personalFilter").on("change", function () {
+        // var $inp = $(this);
+        // var fromVal = $inp.prop("from"); // reading input from value
+        // var toVal = $inp.prop("to"); // reading input to value
 
-//     // DataTable
-//     var table = $('#compoundTable').DataTable();
+        // Reset
+        $("#compoundTable td").parent().show();
 
-//     // Apply the search
-//     table.columns().every( function () {
-//         var that = this;
+        console.log($(complexfilter).val())
+        console.log($(hostfilter).val())
+        console.log($(guestfilter).val())
+        console.log($(averagefilter).val())
+        console.log($(delta_gfilter).val())
+        console.log($(challengefilter).val())
 
-//         $( 'input', this.footer() ).on( 'keyup change', function () {
-//             if ( that.search() !== this.value ) {
-//                 that
-//                     .search( this.value )
-//                     .draw();
-//             }
-//         } );
-//     } );
-// } );
+        if($(complexfilter).val())
+        {
+            // Complex filter
+            $("#compoundTable td.complexcol:contains('" + $(complexfilter).val() + "')").parent().show();
+            $("#compoundTable td.complexcol:not(:contains('" + $(complexfilter).val() + "'))").parent().hide();
+        }
 
+        if($(hostfilter).val())
+        {
+            // Host filter
+            $("#compoundTable td.hostcol:contains('" + $(hostfilter).val() + "')").parent().show();
+            $("#compoundTable td.hostcol:not(:contains('" + $(hostfilter).val() + "'))").parent().hide();
+        }
+
+        if($(guestfilter).val())
+        {
+            // Guest filter
+            $("#compoundTable td.guestcol:contains('" + $(guestfilter).val() + "')").parent().show();
+            $("#compoundTable td.guestcol:not(:contains('" + $(guestfilter).val() + "'))").parent().hide();
+        }
+
+        if($(averagefilter).val())
+        {
+            // challenge filter
+            $("#compoundTable td.averagecol:contains('" + $(averagefilter).val() + "')").parent().show();
+            $("#compoundTable td.averagecol:not(:contains('" + $(averagefilter).val() + "'))").parent().hide();
+        }
+
+        if($(delta_gfilter).val())
+        {
+            // DeltaG filter
+            $("#compoundTable td.deltagcol:contains('" + $(delta_gfilter).val() + "')").parent().show();
+            $("#compoundTable td.deltagcol:not(:contains('" + $(delta_gfilter).val() + "'))").parent().hide();
+        }
+
+        if($(challengefilter).val())
+        {
+            // Challenge filter
+            $("#compoundTable td.challengecol:contains('" + $(challengefilter).val() + "')").parent().show();
+            $("#compoundTable td.challengecol:not(:contains('" + $(challengefilter).val() + "'))").parent().hide();
+        }
+    });
+} );
+
+/* crsftoken function */
 $(function() {
   // This function gets cookie with a given name
   function getCookie(name) {
