@@ -55,16 +55,16 @@
         <div class="row">
             <div class="container">
                 <h2>Compounds</h2>
-                <p>Type something in the input field to filter the table:</p>
-                <input class="form-control" id="tableSearch" type="text" placeholder="Search..">
+                <!-- <p>Type something in the input field to filter the table:</p>
+                <input class="form-control" id="tableSearch" type="text" placeholder="Search.."> -->
             </div>
         </div>
         <br />
         <div class="row">
-            <div class="col-2 center">
+            <div class="col-sm-2 center">
                 <input value="Download checked items" type="submit" form='downForm' class="btn" />
             </div>
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <div class="table-responsive">
                     <form id='downForm' onsubmit="return checkChecks(event)" action="downloadFiles" method="post">
                         {% csrf_token %}
@@ -100,35 +100,51 @@
                     </form>
                 </div>
             </div>
-            <div class="col-2 center">
-                {% with 'GBMODEL INTDIEL SALTCOM MMGBSA NMA DELTA exp' as numList %}
-                    {% for key in keys %}
-                        {{ key }}
-                        {% if key in numList.split %}
-                            <input type="text" class="js-range-slider" name="my_range" value="" />
-                            <script>
-                                $(".js-range-slider").ionRangeSlider({
-                                    type: "double",
-                                    skin: "square",
-                                    step: 0.01,
-                                    min: {{ table|get_item_min:key }},
-                                    max: {{ table|get_item_max:key }},
-                                    from: {{ table|get_item_min:key }},
-                                    to: {{ table|get_item_max:key }},
-                                    grid: true,
-                                    decorate_both: true,
-                                    values_separator: " to ",
-                                    drag_interval: true
-                                });
-                            </script>
-                        {% else %}
-                        <input class="form-control" id="tableSearch" type="text" placeholder="Search in {{ key|toLower }} column...">
-                        {% endif %}
-                        {% if not forloop.last %}
-                            <br/>
-                        {% endif %}
-                    {% endfor %}
-                {% endwith %}
+            <div class="col-3 center">
+                <div class="container">
+                    {% with 'GBMODEL INTDIEL SALTCOM MMGBSA NMA DELTA exp' as numList %}
+                        {% for key in keys %}
+                            {% if forloop.counter|divisibleby:2 %}
+                                <div class="col">
+                            {% else %}
+                                <div class="row">
+                                    <div class="col">
+                            {% endif %}
+                            
+                            
+                            {{ key }}
+                            {% if key in numList.split %}
+                                <input type="text" class="js-range-slider" name="my_range" value="" />
+                                <script>
+                                    $(".js-range-slider").ionRangeSlider({
+                                        type: "double",
+                                        skin: "square",
+                                        step: 0.01,
+                                        min: {{ table|get_item_min:key }},
+                                        max: {{ table|get_item_max:key }},
+                                        from: {{ table|get_item_min:key }},
+                                        to: {{ table|get_item_max:key }},
+                                        grid: true,
+                                        decorate_both: true,
+                                        values_separator: " to ",
+                                        drag_interval: true
+                                    });
+                                </script>
+                            {% else %}
+                            <input class="form-control" id="tableSearch" type="text" placeholder="Search in {{ key|toLower }} column...">
+                            {% endif %}
+                            {% if forloop.counter|divisibleby:2%}
+                                </div>
+                            </div>
+                            {% else %}
+                            </div>
+                            {% endif %}
+                            {% if not forloop.last %}
+                                <br/>
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </div>
             </div>
             <div class="col-1"></div>
         </div>
