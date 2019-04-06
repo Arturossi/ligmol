@@ -1,3 +1,4 @@
+/* Table filter 1 
 $(document).ready(function(){
     $("#tableSearch").on("keyup", function() {
       var value = $(this).val().toLowerCase();
@@ -5,7 +6,33 @@ $(document).ready(function(){
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
       });
     });
-  });
+  });*/
+
+
+/* Table filter 2 */
+// $(document).ready(function() {
+//     // Setup - add a text input to each footer cell
+//     $('#compoundTable thead th').each( function () {
+//         var title = $(this).text();
+//         $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+//     } );
+
+//     // DataTable
+//     var table = $('#compoundTable').DataTable();
+
+//     // Apply the search
+//     table.columns().every( function () {
+//         var that = this;
+
+//         $( 'input', this.footer() ).on( 'keyup change', function () {
+//             if ( that.search() !== this.value ) {
+//                 that
+//                     .search( this.value )
+//                     .draw();
+//             }
+//         } );
+//     } );
+// } );
 
 $(function() {
   // This function gets cookie with a given name

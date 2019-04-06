@@ -1421,8 +1421,41 @@ def downloadFiles(request):
 
 # endregion
 
-# region Filters
+# region Filter auxiliary functions
 
+def convertDict(dt):
+    """
+    Convert dict of dicts into dict of lists (list will hold repeated keys values)
+    """
+    # Instantiate a new list
+    listDict=[]
+
+    # Create list of dicts
+    for k in dt:
+        listDict.append(dt[k])
+    
+    # Instantiate a new dict
+    newdict = {}
+
+    # Add lists to each key
+    for key in listDict[0]:
+        newdict[key] = []
+    
+    # For each dict in list dict
+    for d in listDict:
+        # Iterate over its keys and values
+        for key, value in d.items():
+            # Append data to new dictionary
+            newdict[key].append(value)
+
+    # Return the dict of lists
+    return newdict
+
+
+
+# endregion
+
+# region Filters
 
 @register.filter
 def get_type(value):
@@ -1431,7 +1464,6 @@ def get_type(value):
     """
     return type(value)
 
-
 @register.filter
 def getItem(dictionary, key):
     """
@@ -1439,6 +1471,20 @@ def getItem(dictionary, key):
     """
     return dictionary.get(key)
 
+@register.filter
+def get_item_min(dictionary, key):
+    """
+    Return the mininmum value of dict[key] (dict of dicts)
+    """
+    return tryToRound(min(convertDict(dictionary).get(key.lower())), 2)
+
+@register.filter
+def get_item_max(dictionary, key):
+    """
+    Return the maximum value of dict[key] (dict of dicts)
+    """
+    return tryToRound(max(convertDict(dictionary).get(key.lower())), 2)
+    
 # endregion
 
 
