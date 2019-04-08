@@ -117,7 +117,7 @@
                                 {% endif %}
                                 {{ key }}
                                 {% if key in numList.split %}
-                                    <input id="{{ key|toLower }}filter" type="text" class="js-range-slider personalFilter" value="" />
+                                    <input id="{{ key|toLower }}filter" type="text" class="js-range-slider personalFilterNum" value="" />
                                     <script>
                                         $(".js-range-slider").ionRangeSlider({
                                             type: "double",
@@ -130,11 +130,14 @@
                                             grid: true,
                                             decorate_both: true,
                                             values_separator: " to ",
-                                            drag_interval: true
+                                            drag_interval: true,
+                                            onChange: function(data){
+                                                ligmol.updateTbl();
+                                            }
                                         });
                                     </script>
                                 {% else %}
-                                <input class="form-control personalFilter" id="{{ key|toLower }}filter" type="text" placeholder="Search in {{ key|toLower }} column...">
+                                <input class="form-control personalFilterStr" id="{{ key|toLower }}filter" type="text" placeholder="Search in {{ key|toLower }} column...">
                                 {% endif %}
                                 {% if forloop.counter|divisibleby:2%}
                                     </div>

@@ -1,3 +1,6 @@
+// Ligmol namespace
+var Limol = {};
+
 /* Table filter 1 
 $(document).ready(function(){
     $("#tableSearch").on("keyup", function() {
@@ -8,107 +11,93 @@ $(document).ready(function(){
     });
   });*/
 
+(function($){
+    var namespace
+    namespace = { 
+        updateTbl: function(){
+            // Reset Table
+            $("#compoundTable td.complexcol").parent().show();
+
+            var filtersNo = [];
+
+            if($(complexfilter).val())
+            {
+                // Complex filter
+                filtersNo.push("#compoundTable td.complexcol:not(:contains('" + $(complexfilter).val() + "'))");
+            }
+
+            if($(hostfilter).val())
+            {
+                // Host filter
+                filtersNo.push("#compoundTable td.hostcol:not(:contains('" + $(hostfilter).val() + "'))");
+            }
+
+            if($(guestfilter).val())
+            {
+                // Guest filter
+                filtersNo.push("#compoundTable td.guestcol:not(:contains('" + $(guestfilter).val() + "'))");
+            }
+
+            if($(averagefilter).val())
+            {
+                // challenge filter
+                filtersNo.push("#compoundTable td.averagecol:not(:contains('" + $(averagefilter).val() + "'))");
+            }
+
+            if($(challengefilter).val())
+            {
+                // Challenge filter
+                filtersNo.push("#compoundTable td.challengecol:not(:contains('" + $(challengefilter).val() + "'))");
+            }
+
+            $(filtersNo.join(", ")).parent().hide();
+
+
+            $('#compoundTable tbody tr').each(function() {
+                function hideShow(object, element, innerElement, isInt){
+                    isInt = isInt || false;
+
+                    var min = parseInt( $(object).val().split(';')[0], 10 );
+                    var max = parseInt( $(object).val().split(';')[1], 10 );
+
+                    if(min == max){
+                        return;
+                    }
+                
+                    if(isInt){
+                        var value = parseInt( $(element, innerElement).text(), 10 ) || 0; 
+                    }
+                    else{
+                        var value = parseFloat( $(element, innerElement).text(), 10 ) || 0; 
+
+                    }
+                    if ( min > value || max < value ) {
+                        $(innerElement).hide()
+                    }
+                };
+                hideShow(gbmodelfilter, 'td.gbmodelcol', this, isInt=true);
+                hideShow(intdielfilter, 'td.intdielcol', this, isInt=true);
+                hideShow(saltcomfilter, 'td.saltcomcol', this);
+                hideShow(mmgbsafilter, 'td.mmgbsacol', this);
+                hideShow(nmafilter, 'td.nmacol', this);
+                hideShow(delta_gfilter, 'td.delta_gcol', this);
+                hideShow(expfilter, 'td.expcol', this);
+            });
+        }
+    };
+    window.ligmol = namespace;
+})(this.jQuery);
+
+
 
 /* Table filter 2 */
 $(document).ready(function() {
-
-    // $(".personalFilter").on("keyup change", function () {
-    //     var table = $('#compoundTable').DataTable();
-    //     $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-    //         return parseInt(data[1]) >= parseInt($('#counter-low').val() || data[1]) 
-    //             && parseInt(data[1]) <= parseInt($('#counter-high').val() || data[1])
-    //     });
-    //     $('#counter-low, #counter-high').on('keyup', table.draw);
-
+    // $(".personalFilterNum").on("change", function () {
+    //     updateTbl();
     // });
 
-    //$(".personalFilter").on("change", function () {
-    $(".personalFilter").on("keyup change", function () {
-        // Reset
-        $("#compoundTable td").parent().show();
-
-        // var filtersYes = [];
-        var filtersNo = [];
-
-        if($(complexfilter).val())
-        {
-            // Complex filter
-            // filtersYes.push("#compoundTable td.complexcol:contains('" + $(complexfilter).val() + "')");
-            filtersNo.push("#compoundTable td.complexcol:not(:contains('" + $(complexfilter).val() + "'))");
-        }
-
-        if($(hostfilter).val())
-        {
-            // Host filter
-            // filtersYes.push("#compoundTable td.hostcol:contains('" + $(hostfilter).val() + "')");
-            filtersNo.push("#compoundTable td.hostcol:not(:contains('" + $(hostfilter).val() + "'))");
-        }
-
-        if($(guestfilter).val())
-        {
-            // Guest filter
-            // filtersYes.push("#compoundTable td.guestcol:contains('" + $(guestfilter).val() + "')");
-            filtersNo.push("#compoundTable td.guestcol:not(:contains('" + $(guestfilter).val() + "'))");
-        }
-
-        if($(averagefilter).val())
-        {
-            // challenge filter
-            // filtersYes.push("#compoundTable td.averagecol:contains('" + $(averagefilter).val() + "')");
-            filtersNo.push("#compoundTable td.averagecol:not(:contains('" + $(averagefilter).val() + "'))");
-        }
-
-        if($(challengefilter).val())
-        {
-            // Challenge filter
-            // filtersYes.push("#compoundTable td.challengecol:contains('" + $(challengefilter).val() + "')");
-            filtersNo.push("#compoundTable td.challengecol:not(:contains('" + $(challengefilter).val() + "'))");
-        }
-
-        // GBModel filter
-        // filtersYes.push("#compoundTable td.gbmodelcol:lt('" + $(gbmodelfilter).val().split(';')[1] + "')");
-        // filtersYes.push("#compoundTable td.gbmodelcol:gt('" + $(gbmodelfilter).val().split(';')[0] + "')");
-        // filtersNo.push("#compoundTable td.gbmodelcol:not(:lt('" + $(gbmoldefilter).val().split(';')[1] + "'))");
-        // filtersNo.push("#compoundTable td.gbmodelcol:not(:gt('" + $(gbmodelfilter).val().split(';')[0] + "'))");
-
-        // Intdiel filter
-        // filtersYes.push("#compoundTable td.intdielcol:le(" + $(intdielfilter).val().split(';')[1] + ")");
-        // filtersYes.push("#compoundTable td.intdielcol:ge(" + $(intdielfilter).val().split(';')[0] + ")");
-        filtersNo.push("#compoundTable td.intdielcol:not(:lt(" + $(intdielfilter).val().split(';')[1] + "))");
-        filtersNo.push("#compoundTable td.intdielcol:not(:gt(" + $(intdielfilter).val().split(';')[0] + "))");
-
-        // // saltcom filter
-        // filtersYes.push("#compoundTable td.saltcomcol:lt('" + $(saltcomfilter).data("to") + "')");
-        // filtersYes.push("#compoundTable td.saltcomcol:gt('" + $(saltcomfilter).data("from") + "')");
-        // filtersNo.push("#compoundTable td.saltcomcol:not(:lt('" + $(saltcomfilter).data("to") + "'))");
-        // filtersNo.push("#compoundTable td.saltcomcol:not(:gt('" + $(saltcomfilter).data("from") + "'))");
-
-        // // MMGBSA filter
-        // filtersYes.push("#compoundTable td.mmgbsacol:lt('" + $(mmgbsafilter).data("to") + "')");
-        // filtersYes.push("#compoundTable td.mmgbsacol:gt('" + $(mmgbsafilter).data("from") + "')");
-        // filtersNo.push("#compoundTable td.mmgbsacol:not(:lt('" + $(mmgbsafilter).data("to") + "'))");
-        // filtersNo.push("#compoundTable td.mmgbsacol:not(:gt('" + $(mmgbsafilter).data("from") + "'))");
-
-        // // NMA filter
-        // filtersYes.push("#compoundTable td.nmacol:lt('" + $(nmafilter).data("to") + "')");
-        // filtersYes.push("#compoundTable td.nmacol:gt('" + $(nmafilter).data("from") + "')");
-        // filtersNo.push("#compoundTable td.nmacol:not(:lt('" + $(nmafilter).data("to") + "'))");
-        // filtersNo.push("#compoundTable td.nmacol:not(:gt('" + $(nmafilter).data("from") + "'))");
-
-        // // Delta_G filter
-        // filtersYes.push("#compoundTable td.delta_gcol:lt('" + $(delta_gfilter).data("to") + "')");
-        // filtersYes.push("#compoundTable td.delta_gcol:gt('" + $(delta_gfilter).data("from") + "')");
-        // filtersNo.push("#compoundTable td.delta_gcol:not(:lt('" + $(delta_gfilter).data("to") + "'))");
-        // filtersNo.push("#compoundTable td.delta_gcol:not(:gt('" + $(delta_gfilter).data("from") + "'))");
-
-        // // exp filter
-        // filtersYes.push("#compoundTable td.expcol:lt('" + $(expfilter).data("to") + "')");
-        // filtersYes.push("#compoundTable td.expcol:gt('" + $(expfilter).data("from") + "')");
-        // filtersNo.push("#compoundTable td.expcol:not(:lt('" + $(expfilter).data("to") + "'))");
-        // filtersNo.push("#compoundTable td.expcol:not(:gt('" + $(expfilter).data("from") + "'))");
-
-        // $(filtersYes.join(", ")).parent().show();
-        $(filtersNo.join(", ")).parent().hide();
+    $(".personalFilterStr").on("keyup", function () {
+        ligmol.updateTbl();
     });
 } );
 
