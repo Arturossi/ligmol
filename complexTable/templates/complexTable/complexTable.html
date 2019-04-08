@@ -106,45 +106,47 @@
             <div class="col-3 center">
                     <div class="sticky-top" style="top: 130px;">
                 <div class="container">
-                    {% with 'GBMODEL INTDIEL SALTCOM MMGBSA NMA DELTA exp' as numList %}
-                        {% for key in keys %}
-                            {% if forloop.counter|divisibleby:2 %}
-                                <div class="col">
-                            {% else %}
-                                <div class="row">
-                                    <div class="col">
-                            {% endif %}
-                            {{ key }}
-                            {% if key in numList.split %}
-                                <input id="{{ key|toLower }}filter" type="text" class="js-range-slider personalFilter" value="" />
-                                <script>
-                                    $(".js-range-slider").ionRangeSlider({
-                                        type: "double",
-                                        skin: "square",
-                                        step: 0.01,
-                                        min: {{ table|get_item_min:key }},
-                                        max: {{ table|get_item_max:key }},
-                                        from: {{ table|get_item_min:key }},
-                                        to: {{ table|get_item_max:key }},
-                                        grid: true,
-                                        decorate_both: true,
-                                        values_separator: " to ",
-                                        drag_interval: true
-                                    });
-                                </script>
-                            {% else %}
-                            <input class="form-control personalFilter" id="{{ key|toLower }}filter" type="text" placeholder="Search in {{ key|toLower }} column...">
-                            {% endif %}
-                            {% if forloop.counter|divisibleby:2%}
+                    {% with 'GBMODEL INTDIEL SALTCOM MMGBSA NMA DELTA_G exp' as numList %}
+                        {% with 'GBMODEL INTDIEL' as intList %}
+                            {% for key in keys %}
+                                {% if forloop.counter|divisibleby:2 %}
+                                    <div class="col" style="margin-left: 10px;">
+                                {% else %}
+                                    <div class="row">
+                                        <div class="col" style="margin-right: 10px;">
+                                {% endif %}
+                                {{ key }}
+                                {% if key in numList.split %}
+                                    <input id="{{ key|toLower }}filter" type="text" class="js-range-slider personalFilter" value="" />
+                                    <script>
+                                        $(".js-range-slider").ionRangeSlider({
+                                            type: "double",
+                                            skin: "square",
+                                            step: {% if key in intList.split %}1{% else %}0.01{% endif %},
+                                            min: {{ table|get_item_min:key }},
+                                            max: {{ table|get_item_max:key }},
+                                            from: {{ table|get_item_min:key }},
+                                            to: {{ table|get_item_max:key }},
+                                            grid: true,
+                                            decorate_both: true,
+                                            values_separator: " to ",
+                                            drag_interval: true
+                                        });
+                                    </script>
+                                {% else %}
+                                <input class="form-control personalFilter" id="{{ key|toLower }}filter" type="text" placeholder="Search in {{ key|toLower }} column...">
+                                {% endif %}
+                                {% if forloop.counter|divisibleby:2%}
+                                    </div>
                                 </div>
-                            </div>
-                            {% else %}
-                            </div>
-                            {% endif %}
-                            {% if not forloop.last %}
-                                <br/>
-                            {% endif %}
-                        {% endfor %}
+                                {% else %}
+                                </div>
+                                {% endif %}
+                                {% if not forloop.last %}
+                                    <br/>
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
                     {% endwith %}
                 </div>
             </div>

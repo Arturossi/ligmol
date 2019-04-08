@@ -1476,15 +1476,21 @@ def get_item_min(dictionary, key):
     """
     Return the mininmum value of dict[key] (dict of dicts)
     """
-    return tryToRound(min(convertDict(dictionary).get(key.lower())), 2)
+    if key.lower() == 'gbmodel' or key.lower() == 'intdiel':
+        return min(map(int, convertDict(dictionary).get(key.lower())))
+    else:
+        return tryToRound(min(map(float, convertDict(dictionary).get(key.lower()))), 2)
 
 @register.filter
 def get_item_max(dictionary, key):
     """
     Return the maximum value of dict[key] (dict of dicts)
     """
-    return tryToRound(max(convertDict(dictionary).get(key.lower())), 2)
-    
+    if key.lower() == 'gbmodel' or key.lower() == 'intdiel':
+        return max(map(int, convertDict(dictionary).get(key.lower())))
+    else:
+        return tryToRound(max(map(float, convertDict(dictionary).get(key.lower()))), 2)
+
 @register.filter
 def toLower(string):
     """

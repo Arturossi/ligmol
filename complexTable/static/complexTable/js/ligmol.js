@@ -11,62 +11,104 @@ $(document).ready(function(){
 
 /* Table filter 2 */
 $(document).ready(function() {
-    $(".personalFilter").on("change", function () {
-        // var $inp = $(this);
-        // var fromVal = $inp.prop("from"); // reading input from value
-        // var toVal = $inp.prop("to"); // reading input to value
 
+    // $(".personalFilter").on("keyup change", function () {
+    //     var table = $('#compoundTable').DataTable();
+    //     $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+    //         return parseInt(data[1]) >= parseInt($('#counter-low').val() || data[1]) 
+    //             && parseInt(data[1]) <= parseInt($('#counter-high').val() || data[1])
+    //     });
+    //     $('#counter-low, #counter-high').on('keyup', table.draw);
+
+    // });
+
+    //$(".personalFilter").on("change", function () {
+    $(".personalFilter").on("keyup change", function () {
         // Reset
         $("#compoundTable td").parent().show();
 
-        console.log($(complexfilter).val())
-        console.log($(hostfilter).val())
-        console.log($(guestfilter).val())
-        console.log($(averagefilter).val())
-        console.log($(delta_gfilter).val())
-        console.log($(challengefilter).val())
+        // var filtersYes = [];
+        var filtersNo = [];
 
         if($(complexfilter).val())
         {
             // Complex filter
-            $("#compoundTable td.complexcol:contains('" + $(complexfilter).val() + "')").parent().show();
-            $("#compoundTable td.complexcol:not(:contains('" + $(complexfilter).val() + "'))").parent().hide();
+            // filtersYes.push("#compoundTable td.complexcol:contains('" + $(complexfilter).val() + "')");
+            filtersNo.push("#compoundTable td.complexcol:not(:contains('" + $(complexfilter).val() + "'))");
         }
 
         if($(hostfilter).val())
         {
             // Host filter
-            $("#compoundTable td.hostcol:contains('" + $(hostfilter).val() + "')").parent().show();
-            $("#compoundTable td.hostcol:not(:contains('" + $(hostfilter).val() + "'))").parent().hide();
+            // filtersYes.push("#compoundTable td.hostcol:contains('" + $(hostfilter).val() + "')");
+            filtersNo.push("#compoundTable td.hostcol:not(:contains('" + $(hostfilter).val() + "'))");
         }
 
         if($(guestfilter).val())
         {
             // Guest filter
-            $("#compoundTable td.guestcol:contains('" + $(guestfilter).val() + "')").parent().show();
-            $("#compoundTable td.guestcol:not(:contains('" + $(guestfilter).val() + "'))").parent().hide();
+            // filtersYes.push("#compoundTable td.guestcol:contains('" + $(guestfilter).val() + "')");
+            filtersNo.push("#compoundTable td.guestcol:not(:contains('" + $(guestfilter).val() + "'))");
         }
 
         if($(averagefilter).val())
         {
             // challenge filter
-            $("#compoundTable td.averagecol:contains('" + $(averagefilter).val() + "')").parent().show();
-            $("#compoundTable td.averagecol:not(:contains('" + $(averagefilter).val() + "'))").parent().hide();
-        }
-
-        if($(delta_gfilter).val())
-        {
-            // DeltaG filter
-            $("#compoundTable td.deltagcol:contains('" + $(delta_gfilter).val() + "')").parent().show();
-            $("#compoundTable td.deltagcol:not(:contains('" + $(delta_gfilter).val() + "'))").parent().hide();
+            // filtersYes.push("#compoundTable td.averagecol:contains('" + $(averagefilter).val() + "')");
+            filtersNo.push("#compoundTable td.averagecol:not(:contains('" + $(averagefilter).val() + "'))");
         }
 
         if($(challengefilter).val())
         {
             // Challenge filter
-            $("#compoundTable td.challengecol:contains('" + $(challengefilter).val() + "')").parent().show();
-            $("#compoundTable td.challengecol:not(:contains('" + $(challengefilter).val() + "'))").parent().hide();
+            // filtersYes.push("#compoundTable td.challengecol:contains('" + $(challengefilter).val() + "')");
+            filtersNo.push("#compoundTable td.challengecol:not(:contains('" + $(challengefilter).val() + "'))");
         }
+
+        // GBModel filter
+        // filtersYes.push("#compoundTable td.gbmodelcol:lt('" + $(gbmodelfilter).val().split(';')[1] + "')");
+        // filtersYes.push("#compoundTable td.gbmodelcol:gt('" + $(gbmodelfilter).val().split(';')[0] + "')");
+        // filtersNo.push("#compoundTable td.gbmodelcol:not(:lt('" + $(gbmoldefilter).val().split(';')[1] + "'))");
+        // filtersNo.push("#compoundTable td.gbmodelcol:not(:gt('" + $(gbmodelfilter).val().split(';')[0] + "'))");
+
+        // Intdiel filter
+        // filtersYes.push("#compoundTable td.intdielcol:le(" + $(intdielfilter).val().split(';')[1] + ")");
+        // filtersYes.push("#compoundTable td.intdielcol:ge(" + $(intdielfilter).val().split(';')[0] + ")");
+        filtersNo.push("#compoundTable td.intdielcol:not(:lt(" + $(intdielfilter).val().split(';')[1] + "))");
+        filtersNo.push("#compoundTable td.intdielcol:not(:gt(" + $(intdielfilter).val().split(';')[0] + "))");
+
+        // // saltcom filter
+        // filtersYes.push("#compoundTable td.saltcomcol:lt('" + $(saltcomfilter).data("to") + "')");
+        // filtersYes.push("#compoundTable td.saltcomcol:gt('" + $(saltcomfilter).data("from") + "')");
+        // filtersNo.push("#compoundTable td.saltcomcol:not(:lt('" + $(saltcomfilter).data("to") + "'))");
+        // filtersNo.push("#compoundTable td.saltcomcol:not(:gt('" + $(saltcomfilter).data("from") + "'))");
+
+        // // MMGBSA filter
+        // filtersYes.push("#compoundTable td.mmgbsacol:lt('" + $(mmgbsafilter).data("to") + "')");
+        // filtersYes.push("#compoundTable td.mmgbsacol:gt('" + $(mmgbsafilter).data("from") + "')");
+        // filtersNo.push("#compoundTable td.mmgbsacol:not(:lt('" + $(mmgbsafilter).data("to") + "'))");
+        // filtersNo.push("#compoundTable td.mmgbsacol:not(:gt('" + $(mmgbsafilter).data("from") + "'))");
+
+        // // NMA filter
+        // filtersYes.push("#compoundTable td.nmacol:lt('" + $(nmafilter).data("to") + "')");
+        // filtersYes.push("#compoundTable td.nmacol:gt('" + $(nmafilter).data("from") + "')");
+        // filtersNo.push("#compoundTable td.nmacol:not(:lt('" + $(nmafilter).data("to") + "'))");
+        // filtersNo.push("#compoundTable td.nmacol:not(:gt('" + $(nmafilter).data("from") + "'))");
+
+        // // Delta_G filter
+        // filtersYes.push("#compoundTable td.delta_gcol:lt('" + $(delta_gfilter).data("to") + "')");
+        // filtersYes.push("#compoundTable td.delta_gcol:gt('" + $(delta_gfilter).data("from") + "')");
+        // filtersNo.push("#compoundTable td.delta_gcol:not(:lt('" + $(delta_gfilter).data("to") + "'))");
+        // filtersNo.push("#compoundTable td.delta_gcol:not(:gt('" + $(delta_gfilter).data("from") + "'))");
+
+        // // exp filter
+        // filtersYes.push("#compoundTable td.expcol:lt('" + $(expfilter).data("to") + "')");
+        // filtersYes.push("#compoundTable td.expcol:gt('" + $(expfilter).data("from") + "')");
+        // filtersNo.push("#compoundTable td.expcol:not(:lt('" + $(expfilter).data("to") + "'))");
+        // filtersNo.push("#compoundTable td.expcol:not(:gt('" + $(expfilter).data("from") + "'))");
+
+        // $(filtersYes.join(", ")).parent().show();
+        $(filtersNo.join(", ")).parent().hide();
     });
 } );
 
