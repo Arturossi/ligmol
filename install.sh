@@ -1,3 +1,20 @@
+#!/usr/bin/bash
+
+#
+#   This section checks if channels are installed and if not
+#   install them
+#
+
+channels = $(conda config --get channels)
+
+if [[ $channels != *"--add channels 'conda-forge'"* ]]; then
+  conda config --add channels 'conda-forge'
+fi
+
+if [[ $channels != *"--add channels 'rdkit'"* ]]; then
+  conda config --add channels 'rdkit'
+fi
+
 {
     #
     #  Try to install the environment with the yml file
