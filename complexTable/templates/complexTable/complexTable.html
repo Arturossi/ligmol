@@ -137,7 +137,11 @@
                                         });
                                     </script>
                                 {% else %}
-                                <input class="form-control personalFilterStr" id="{{ key|toLower }}filter" type="text" placeholder="Search in {{ key|toLower }} column...">
+                                <br/>
+                                <select class="form-control personalFilterStr" id="{{ key|toLower }}filter" placeholder="Search in {{ key|toLower }} column..." style="width: 100%;">
+                                    <option value="none">None</option> 
+                                </select>
+                                <!-- <input class="form-control personalFilterStr" id="{{ key|toLower }}filter" type="text" placeholder="Search in {{ key|toLower }} column..."> -->
                                 {% endif %}
                                 {% if forloop.counter|divisibleby:2%}
                                     </div>

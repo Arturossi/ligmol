@@ -1,5 +1,5 @@
 // Ligmol namespace
-var Limol = {};
+var Ligmol = {};
 
 /* Table filter 1 
 $(document).ready(function(){
@@ -20,31 +20,31 @@ $(document).ready(function(){
 
             var filtersNo = [];
 
-            if($(complexfilter).val())
+            if($(complexfilter).val() && $(complexfilter).val() != "none")
             {
                 // Complex filter
                 filtersNo.push("#compoundTable td.complexcol:not(:contains('" + $(complexfilter).val() + "'))");
             }
 
-            if($(hostfilter).val())
+            if($(hostfilter).val() && $(hostfilter).val() != "none")
             {
                 // Host filter
                 filtersNo.push("#compoundTable td.hostcol:not(:contains('" + $(hostfilter).val() + "'))");
             }
 
-            if($(guestfilter).val())
+            if($(guestfilter).val() && $(guestfilter).val() != "none")
             {
                 // Guest filter
                 filtersNo.push("#compoundTable td.guestcol:not(:contains('" + $(guestfilter).val() + "'))");
             }
 
-            if($(averagefilter).val())
+            if($(averagefilter).val() && $(averagefilter).val() != "none")
             {
                 // challenge filter
                 filtersNo.push("#compoundTable td.averagecol:not(:contains('" + $(averagefilter).val() + "'))");
             }
 
-            if($(challengefilter).val())
+            if($(challengefilter).val() && $(challengefilter).val() != "none")
             {
                 // Challenge filter
                 filtersNo.push("#compoundTable td.challengecol:not(:contains('" + $(challengefilter).val() + "'))");
@@ -56,21 +56,22 @@ $(document).ready(function(){
             $('#compoundTable tbody tr').each(function() {
                 function hideShow(object, element, innerElement, isInt){
                     isInt = isInt || false;
-
-                    var min = parseInt( $(object).val().split(';')[0], 10 );
-                    var max = parseInt( $(object).val().split(';')[1], 10 );
+                    
+                    if(isInt){
+                        var value = parseInt( $(element, innerElement).text(), 10 ) || 0; 
+                        var min = parseInt( $(object).val().split(';')[0], 10 );
+                        var max = parseInt( $(object).val().split(';')[1], 10 );
+                    }
+                    else{
+                        var value = parseFloat( $(element, innerElement).text(), 10 ) || 0; 
+                        var min = parseFloat( $(object).val().split(';')[0], 10 );
+                        var max = parseFloat( $(object).val().split(';')[1], 10 );
+                    }
 
                     if(min == max){
                         return;
                     }
-                
-                    if(isInt){
-                        var value = parseInt( $(element, innerElement).text(), 10 ) || 0; 
-                    }
-                    else{
-                        var value = parseFloat( $(element, innerElement).text(), 10 ) || 0; 
 
-                    }
                     if ( min > value || max < value ) {
                         $(innerElement).hide()
                     }
@@ -88,15 +89,50 @@ $(document).ready(function(){
     window.ligmol = namespace;
 })(this.jQuery);
 
+function updateSelects()
+{
+    var dict = {
+        "complexcol" : [],
+        "hostcol" : [],
+        "guestcol" : [],
+        "averagecol" : [],
+        "challengecol" : []
+    };
 
+    // $('#compoundTable tbody tr').each(function() {
+    function fillDict(element)
+    {
+        this.contained = [];
+        var self = this;
+        $('#compoundTable tr td.' + element).each(function() {
+            var value = $(this).html();
+            if(jQuery.inArray(value, self.contained) == -1)
+            {
+                self.contained.push(value);
+                $('#' + element.slice(0, -3) + 'filter').append('<option value="' + value + '">' + value + '</option>');
+            }
+         });
+    };
+
+    fillDict('complexcol');
+    fillDict('hostcol');
+    fillDict('guestcol');
+    fillDict('averagecol');
+    fillDict('challengecol');
+}
 
 /* Table filter 2 */
 $(document).ready(function() {
-    // $(".personalFilterNum").on("change", function () {
-    //     updateTbl();
-    // });
 
-    $(".personalFilterStr").on("keyup", function () {
+    updateSelects();
+
+    // PersonalFilterNum Filter
+    $(".personalFilterNum").on("change", function () {
+        updateTbl();
+    });
+
+    // PersonalFilterStr Filter
+    $(".personalFilterStr").on("change", function () {
         ligmol.updateTbl();
     });
 } );
